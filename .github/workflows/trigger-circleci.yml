@@ -57,7 +57,6 @@ jobs:
         name: Determine whether or not to trigger CircleCi for the in-progress branch...
         shell: bash
         env:
-          EM_EVENT: ${{ github.event }}
           COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
         run: |
           if [[ "${CIRCLE_TOKEN}" == "" ]]; then
@@ -65,6 +64,7 @@ jobs:
             exit 1;
           fi
 
+          cat "$GITHUB_EVENT_PATH"
           env
 
           echo "Commit message: $COMMIT_MESSAGE"
