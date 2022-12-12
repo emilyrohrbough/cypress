@@ -64,6 +64,7 @@ jobs:
             exit 1;
           fi
 
+          gh search prs $GITHUB_SHA
           cat "$GITHUB_EVENT_PATH"
           env
 
