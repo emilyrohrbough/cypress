@@ -23,7 +23,6 @@ jobs:
               exit 0
             fi
 
-
             LAST_COMMIT_MESSAGE=$(curl --silent "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commits/${CIRCLE_BRANCH}" | jq '.commit.message')
 
             if [[ "$LAST_COMMIT_MESSAGE" =~ "run ci" ]]; then
@@ -34,11 +33,6 @@ jobs:
             cancel_build () {
               echo "Canceling the CI build..."
               circleci-agent step halt
-              # curl --request POST \
-              #   --url https://circleci.com/api/v2/workflow/$CIRCLE_WORKFLOW_ID/cancel \
-              #   --header "Circle-Token: ${CIRCLE_TOKEN}"
-              sleep 30  # Give cancellation a chance to run. This script then won't continue running.
-              exit 1  # If cancellation didn't run for some reason, fail the build.
             }
 
             TRIGGER_INSTRUCTIONS="to trigger CI , include 'run ci' in the commit message or click the 'Trigger Pipeline' button in the CircleCI UI."
@@ -54,9 +48,10 @@ jobs:
               echo "Always run CI for PR that is ready for review."
               exit 0
             fi
+      - run:
+          command: echo 'step 2'
 
-            echo "Always run CI when the commit message includes 'run ci'."
-
+    
       # - run:
       #     name: Download .circleci/workflows.yaml
       #     command: |
@@ -67,10 +62,20 @@ jobs:
       #       fi
       # - continuation/continue:
       #     configuration_path: workflows.yml
+  build:
+    docker:
+      - image: cimg/node:current
+    steps:
+      - run:
+          command: echo 'step 2'
+
+
 
 workflows:
   # the setup-workflow workflow is always triggered.
   setup-workflow:
     jobs:
-      - verify-ci-should-run:
-          context: workflow-setup
+      - verify-ci-should-run
+          # context: workflow-setup
+      - build:
+          requires: verify-ci-should-run
