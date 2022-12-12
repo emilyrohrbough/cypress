@@ -1,50 +1,97 @@
 name: "Trigger CircleCi Pipeline"
 
 on:
+  push:
   pull_request_target:
     types:
       - opened
-      - ready_for_review
       - synchronize
-
+      - ready_for_review
+env:
+  CIRCLE_TOKEN: ${{ secrets.CIRCLE_TOKEN }}
+  TRIGGER_INSTRUCTIONS: "To trigger a CI run, include 'run ci' in the commit message or click the 'Trigger Pipeline' button in the CircleCI UI."
 jobs:
   main:
-    name: Trigger CircleCi Pipeline when PR is ready for review
+    name: Trigger CircleCI?
     runs-on: ubuntu-latest
     steps:
-      - if: ${{ github.event.pull_request.draft == true }} 
-        run: echo "This PR is still in draft. Not triggering the CircleCi Pipeline"
-      - if: ${{ github.event.pull_request.draft == false }}
+      - if: ${{ github.event_name == 'pull_request' && github.event.pull_request.draft == false }}
+        name: 
         shell: bash
-        env:
-          CIRCLE_TOKEN: ${{ secrets.CIRCLE_TOKEN }}
-          BASE_ORG_AND_REPO: ${{ github.event.pull_request.head.full_name }}
-          PULL_ID: ${{ github.event.pull_request.number }}
         run: |
           if [[ "${CIRCLE_TOKEN}" == "" ]]; then
-            echo "The CIRCLE_TOKEN is unset. Cannot trigger pipeline..."
+            echo "The CIRCLE_TOKEN is not set. Cannot trigger pipeline..."
             exit 1;
           fi
 
-          BRANCH="$GITHUB_HEAD_REF"
+          echo "Determine whether or not to trigger CircleCi pipeline"
+          printenv
 
-          if [[ "$BASE_ORG_AND_REPO" != "cypress-io/cypress" ]]; then
-            echo "Triggering CircleCi pipeline for outside contributor."
-            BRANCH="pull/$PULL_ID/head"
-          fi
+          echo " - repo $BASE_ORG_AND_REPO"
+          # echo " - branch $GITHUB_HEAD_REF"
+          # echo " - pull $PULL_ID"
+          echo " - event $EVENT"
 
-          echo "Triggering CircleCi pipeline for $BRANCH"
+          # BRANCH="$GITHUB_HEAD_REF"
 
-          response=$(curl -X POST https://circleci.com/api/v2/project/github/cypress-io/cypress/pipeline \
-            --header "Circle-Token:$CIRCLE_TOKEN" \
-            --header "content-type:application/json" \
-            --data "{\"branch\":\"$BRANCH\"}" \
-            --silent
-          )
+          # if [[ "$BASE_ORG_AND_REPO" === "" "$BASE_ORG_AND_REPO" != "cypress-io/cypress" ]]; then
+          #   echo "Triggering CircleCi pipeline for outside contributor."
+          #   BRANCH="pull/$PULL_ID/head"
+          # fi
 
-          echo "$response"
+          # response=$(curl -X POST https://circleci.com/api/v2/project/github/cypress-io/cypress/pipeline \
+          #   --header "Circle-Token:$CIRCLE_TOKEN" \
+          #   --header "content-type:application/json" \
+          #   --data "{\"branch\":\"$BRANCH\"}" \
+          #   --silent
+          # )
 
-          if [ "$(jq 'has("message")' <<< $response )" == "true" ]; then
-            echo "Error triggering pipeline..."
+          # echo "$response"
+
+          # if [ "$(jq 'has("message")' <<< $response )" == "true" ]; then
+          #   echo "Error triggering pipeline..."
+          #   exit 1;
+          # fi
+
+      - if: ${{ github.event_name != 'pull_request' }}
+        name: Determine whether or not to trigger CircleCi for the in-progress branch...
+        shell: bash
+        env:
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+        run: |
+          if [[ "${CIRCLE_TOKEN}" == "" ]]; then
+            echo "The CIRCLE_TOKEN is not set. Cannot trigger pipeline..."
             exit 1;
           fi
+
+          echo "Commit message: $COMMIT_MESSAGE"
+
+          trigger_circleci () {
+            response=$(curl -X POST https://circleci.com/api/v2/project/github/cypress-io/cypress/pipeline \
+              --header "Circle-Token:$CIRCLE_TOKEN" \
+              --header "content-type:application/json" \
+              --data "{\"branch\":\"${GITHUB_REF#refs/heads/}\"}" \
+              --silent
+            )
+
+            echo "$response"
+
+            if [ "$(jq 'has("message")' <<< $response )" == "true" ]; then
+              echo "Error triggering pipeline..."
+              exit 1;
+            fi
+            
+            exit 0
+          }
+
+          if [[ "$GITHUB_REF" == "refs/heads/develop" || "$GITHUB_REF" == "refs/heads/release/"* ]]; then
+            echo "Always run CI for develop and for release candidate branches."
+            trigger_circleci
+          fi
+
+          if [[ "$COMMIT_MESSAGE" =~ "run ci" ]]; then
+            echo "Always run CI when the commit message includes 'run ci'."
+            trigger_circleci 
+          fi
+
+          echo "Didn't trigger CircleCI run because the branch is in-progress. $TRIGGER_INSTRUCTIONS"

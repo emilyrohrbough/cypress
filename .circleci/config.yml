@@ -55,16 +55,16 @@ jobs:
 
             echo "Always run CI when the commit message includes 'run ci'."
 
-      - run:
-          name: Download .circleci/workflows.yaml
-          command: |
-            if [[ "$CIRCLE_BRANCH" == "pull/"* ]]; then
-              curl -o workflows.yml https://raw.githubusercontent.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/develop/.circleci/workflows.yml
-            else 
-              curl -o workflows.yml https://raw.githubusercontent.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}/.circleci/workflows.yml
-            fi
-      - continuation/continue:
-          configuration_path: workflows.yml
+      # - run:
+      #     name: Download .circleci/workflows.yaml
+      #     command: |
+      #       if [[ "$CIRCLE_BRANCH" == "pull/"* ]]; then
+      #         curl -o workflows.yml https://raw.githubusercontent.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/develop/.circleci/workflows.yml
+      #       else 
+      #         curl -o workflows.yml https://raw.githubusercontent.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}/.circleci/workflows.yml
+      #       fi
+      # - continuation/continue:
+      #     configuration_path: workflows.yml
 
 workflows:
   # the setup-workflow workflow is always triggered.
