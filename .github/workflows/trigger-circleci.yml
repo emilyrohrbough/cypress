@@ -68,6 +68,7 @@ jobs:
           echo "Commit message: $COMMIT_MESSAGE"
 
           trigger_circleci () {
+            echo "Triggering CircleCI job for $GITHUB_REF ${GITHUB_REF#refs/heads/}"
             response=$(curl -X POST https://circleci.com/api/v2/project/github/cypress-io/cypress/pipeline \
               --header "Circle-Token:$CIRCLE_TOKEN" \
               --header "content-type:application/json" \
