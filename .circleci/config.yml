@@ -23,6 +23,9 @@ jobs:
               exit 0
             fi
 
+
+            LAST_COMMIT_MESSAGE=$(curl --silent "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commits/${CIRCLE_BRANCH}" | jq '.commit.message')
+
             if [[ "$LAST_COMMIT_MESSAGE" =~ "run ci" ]]; then
               echo "Running CI; branch in progress but included run ci in commit message"
               exit 0
@@ -50,9 +53,6 @@ jobs:
               echo "Always run CI for PR that is ready for review."
               exit 0
             fi
-
-            LAST_COMMIT_MESSAGE=$(curl --silent "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commits/${CIRCLE_BRANCH}" | jq '.commit.message')
-
 
             echo "Always run CI when the commit message includes 'run ci'."
 

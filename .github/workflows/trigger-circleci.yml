@@ -2,11 +2,11 @@ name: "Trigger CircleCi Pipeline"
 
 on:
   push:
-  pull_request_target:
-    types:
-      - opened
-      - synchronize
-      - ready_for_review
+  # pull_request_target:
+  #   types:
+  #     - opened
+  #     - synchronize
+  #     - ready_for_review
 env:
   CIRCLE_TOKEN: ${{ secrets.CIRCLE_TOKEN }}
   TRIGGER_INSTRUCTIONS: "To trigger a CI run, include 'run ci' in the commit message or click the 'Trigger Pipeline' button in the CircleCI UI."
