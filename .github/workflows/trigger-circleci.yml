@@ -1,6 +1,5 @@
 name: "Trigger CircleCi Pipeline"
 
-
 on:
   push:
   pull_request_target:
