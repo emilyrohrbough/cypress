@@ -98,10 +98,10 @@ jobs:
           )
 
           echo "$response"
-          has_pull_request=$(echo -E "$response" | jq '. | length' > 0)
-          echo "has_pull_request - $has_pull_request"
+          num_pull_request=$(echo -E "$response" | jq '. | length')
+          echo "num_pull_request - $num_pull_request"
 
-          if [[ has_pull_request ]]; then
+          if [[ num_pull_request > 0 ]]; then
             is_draft_pull_request=$(echo -E "$response" | jq '.draft' == 'true')
             echo "is_draft_pull_request - $is_draft_pull_request"
             
