@@ -101,8 +101,8 @@ jobs:
           num_pull_request=$(echo -E "$response" | jq '. | length')
           echo "num_pull_request - $num_pull_request"
 
-          if [[ num_pull_request > 0 ]]; then
-            is_draft_pull_request=$(echo -E "$response" | jq '.draft' == 'true')
+          if [[ $num_pull_request > 0 ]]; then
+            is_draft_pull_request=$(echo -E "$response" | jq '.[0].draft' == 'true')
             echo "is_draft_pull_request - $is_draft_pull_request"
             
             if [[ is_draft_pull_request ]] && ! [[ "$COMMIT_MESSAGE" =~ "run ci" ]]; then
