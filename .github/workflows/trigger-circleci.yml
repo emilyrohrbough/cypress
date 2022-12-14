@@ -110,10 +110,10 @@ jobs:
               statusUrl=$(echo -E "$response" | jq ".[0]._links.statuses.href")
               echo "statusUrl - $statusUrl"
 
-              circleCiPipelineUrl=$(curl "$statusUrl" | jq ".[0].target_url")
+              circleCiPipelineUrl=$(curl $statusUrl | jq ".[0].target_url")
               echo "circleCiPipelineUrl id - $circleCiPipelineUrl"
 
-              pipelineId=$(curl "$circleCiPipelineUrl" | jq ".id")
+              pipelineId=$(curl $circleCiPipelineUrl | jq ".id")
               echo "pipeline id - $pipelineId"
 
               pipelineWorkflows=$(curl --request GET \
