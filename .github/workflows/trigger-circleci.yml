@@ -97,7 +97,6 @@ jobs:
             --silent
           )
 
-          echo "$response"
           num_pull_request=$(echo -E "$response" | jq ". | length")
           echo "num_pull_request - $num_pull_request"
 
@@ -108,7 +107,7 @@ jobs:
             if [[ "$draft_pull_request" == "true" ]] && ! [[ "$COMMIT_MESSAGE" =~ "run ci" ]]; then
               echo "PR is in draft...cancel in-progress CircleCi run since the commit message did not include 'run ci'."
 
-              statusUrl=$(echo -E "$response" | jq "._links.statuses.href")
+              statusUrl=$(echo -E "$response" | jq ".[0]._links.statuses.href")
               echo "statusUrl - $statusUrl"
 
 
