@@ -98,21 +98,21 @@ jobs:
           )
 
           echo "$response"
-          num_pull_request=$(echo -E "$response" | jq '. | length')
+          num_pull_request=$(echo -E "$response" | jq ". | length")
           echo "num_pull_request - $num_pull_request"
 
           if [[ $num_pull_request > 0 ]]; then
-            is_draft_pull_request=$(echo -E "$response" | jq '.[0].draft' == 'true')
-            echo "is_draft_pull_request - $is_draft_pull_request"
+            draft_pull_request=$(echo -E "$response" | jq ".[0].draft")
+            echo "draft_pull_request - $draft_pull_request"
             
-            if [[ is_draft_pull_request ]] && ! [[ "$COMMIT_MESSAGE" =~ "run ci" ]]; then
+            if [[ "$draft_pull_request" == "true" ]] && ! [[ "$COMMIT_MESSAGE" =~ "run ci" ]]; then
               echo "PR is in draft...cancel in-progress CircleCi run since the commit message did not include 'run ci'."
 
-              statusUrl=$(echo -E "$response" | jq '._links.statuses.href')
+              statusUrl=$(echo -E "$response" | jq "._links.statuses.href")
               echo "statusUrl - $statusUrl"
 
 
-              pipelineId = $(curl --request GET --url $circleCiPipelineUrl | js '.id')
+              pipelineId = $(curl --request GET --url $circleCiPipelineUrl | js ".id")
               echo "pipeline id - $pipelineId"
 
               pipelineWorkflows=$(curl --request GET \
