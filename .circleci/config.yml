@@ -76,6 +76,5 @@ workflows:
   setup-workflow:
     jobs:
       - verify-ci-should-run
-          # context: workflow-setup
       - build:
           requires: verify-ci-should-run

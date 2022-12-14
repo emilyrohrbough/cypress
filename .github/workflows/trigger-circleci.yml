@@ -64,11 +64,9 @@ jobs:
             exit 1;
           fi
 
-          gh search prs $GITHUB_SHA
-          cat "$GITHUB_EVENT_PATH"
-          env
-
           echo "Commit message: $COMMIT_MESSAGE"
+
+
 
           trigger_circleci () {
             echo "Triggering CircleCI job for $GITHUB_REF ${GITHUB_REF#refs/heads/}"
@@ -90,12 +88,51 @@ jobs:
           }
 
           if [[ "$GITHUB_REF" == "refs/heads/develop" || "$GITHUB_REF" == "refs/heads/release/"* ]]; then
-            echo "Always run CI for develop and for release candidate branches."
+            echo "Always run CircleCI run for develop and for release candidate branches."
             trigger_circleci
           fi
 
+          response=$(curl https://api.github.com/repos/emilyrohrbough/cypress/commits/${GITHUB_SHA}/pulls \
+            --header "Accept:application/vnd.github+json" \
+            --silent
+          )
+
+          echo "$response"
+          has_pull_request=$(echo -E "$response" | jq '. | length' > 0)
+          echo "has_pull_request - $has_pull_request"
+
+          if [[ has_pull_request ]]; then
+            is_draft_pull_request=$(echo -E "$response" | jq '.draft' == 'true')
+            echo "is_draft_pull_request - $is_draft_pull_request"
+            
+            if [[ is_draft_pull_request ]] && ! [[ "$COMMIT_MESSAGE" =~ "run ci" ]]; then
+              echo "PR is in draft...cancel in-progress CircleCi run since the commit message did not include 'run ci'."
+
+              statusUrl=$(echo -E "$response" | jq '._links.statuses.href')
+              echo "statusUrl - $statusUrl"
+
+
+              pipelineId = $(curl --request GET --url $circleCiPipelineUrl | js '.id')
+              echo "pipeline id - $pipelineId"
+
+              pipelineWorkflows=$(curl --request GET \
+                --url 'https://circleci.com/api/v2/pipeline/$pipelineId/workflow'
+              )
+              
+              echo "pipeline workflows - $pipelineWorkflows"
+              
+              # // for each pipeline workflow -- cancel it.
+              # curl --request POST \
+              #   --url https://circleci.com/api/v2/workflow//cancel \
+              #   --header 'authorization: Basic REPLACE_BASIC_AUTH'
+            fi
+
+            echo "CircleCi automatically handles triggering builds for commits to Pull Requests. Didn't trigger CircleCI run."
+            exit 0
+          fi
+
           if [[ "$COMMIT_MESSAGE" =~ "run ci" ]]; then
-            echo "Always run CI when the commit message includes 'run ci'."
+            echo "Always trigger CircleCI run when the commit message includes 'run ci'."
             trigger_circleci 
           fi
 
