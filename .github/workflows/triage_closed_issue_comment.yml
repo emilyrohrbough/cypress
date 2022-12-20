@@ -15,9 +15,9 @@ jobs:
       - name: Get project data
         env:
           GITHUB_TOKEN: ${{ secrets.ADD_TO_PROJECT_TOKEN }}
-          ORGANIZATION: 'cypress-io'
-          REPOSITORY: 'cypress'
-          PROJECT_NUMBER: 9
+          ORGANIZATION: 'konabell'
+          REPOSITORY: 'actions-test'
+          PROJECT_NUMBER: 1
           ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
           gh api graphql -f query='
@@ -25,7 +25,7 @@ jobs:
               organization(login: $org) {
                 repository(name: $repo) {
                   issue(number: $issue) {
-                    projectItems(first: 10, includeArchived: false) {
+                    projectItems(first: 10, includeArchived: true) {
                       nodes {
                         id
                         fieldValueByName(name: "Status") {
@@ -69,7 +69,7 @@ jobs:
       - name: Move issue to New Issue status
         env:
           GITHUB_TOKEN: ${{ secrets.ADD_TO_PROJECT_TOKEN }}
-        if: env.STATUS == 'Closed'
+        if: env.PROJECT_ID == env.PROJECT_NUMBER
         run: |
           gh api graphql -f query='
             mutation (
@@ -91,3 +91,10 @@ jobs:
                 }
               }
             }' -f project=$PROJECT_ID -f item=$PROJECT_ITEM_ID -f status_field=$STATUS_FIELD_ID -f status_value=$NEW_ISSUE_OPTION_ID
+      - name: Add closed issue to triage project
+        if: env.PROJECT_ID == ''
+        uses: actions/add-to-project@v0.3.0
+          with:
+            project-url: https://github.com/orgs/konabell/projects/1
+            github-token: ${{ secrets.ADD_TO_PROJECT_TOKEN }}
+

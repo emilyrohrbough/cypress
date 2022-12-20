@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/github-script@v6
         env:
-          ORGANIZATION: 'cypress-io'
+          ORGANIZATION: 'emilyrohrbough'
           REPOSITORY: 'cypress'
           PROJECT_NUMBER: 9
         with:

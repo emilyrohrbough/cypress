@@ -15,6 +15,6 @@ jobs:
     steps:
       - uses: actions/add-to-project@v0.3.0
         with:
-          project-url: https://github.com/orgs/cypress-io/projects/9
+          project-url: https://github.com/orgs/emilyrohrbough/projects/9
           github-token: ${{ secrets.ADD_TO_PROJECT_TOKEN }}
           

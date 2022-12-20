@@ -11,7 +11,7 @@ jobs:
       - name: Get project data
         env:
           GITHUB_TOKEN: ${{ secrets.ADD_TO_PROJECT_TOKEN }}
-          ORGANIZATION: 'cypress-io'
+          ORGANIZATION: 'emilyrohrbough'
           PROJECT_NUMBER: 10
         run: |
           gh api graphql -f query='
