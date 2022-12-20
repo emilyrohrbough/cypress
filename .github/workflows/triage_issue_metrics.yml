@@ -17,7 +17,7 @@ jobs:
         env:
           ORGANIZATION: 'emilyrohrbough'
           REPOSITORY: 'cypress'
-          PROJECT_NUMBER: 9
+          PROJECT_NUMBER: 1
         with:
           github-token: ${{ secrets.ADD_TO_PROJECT_TOKEN }}
           script: |

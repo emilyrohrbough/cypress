@@ -15,8 +15,8 @@ jobs:
       - name: Get project data
         env:
           GITHUB_TOKEN: ${{ secrets.ADD_TO_PROJECT_TOKEN }}
-          ORGANIZATION: 'konabell'
-          REPOSITORY: 'actions-test'
+          ORGANIZATION: 'emilyrohrbough'
+          REPOSITORY: 'cypress'
           PROJECT_NUMBER: 1
           ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
@@ -94,7 +94,7 @@ jobs:
       - name: Add closed issue to triage project
         if: env.PROJECT_ID == ''
         uses: actions/add-to-project@v0.3.0
-          with:
-            project-url: https://github.com/orgs/konabell/projects/1
-            github-token: ${{ secrets.ADD_TO_PROJECT_TOKEN }}
+        with:
+          project-url: https://github.com/orgs/emilyrohrbough/projects/1
+          github-token: ${{ secrets.ADD_TO_PROJECT_TOKEN }}
 
