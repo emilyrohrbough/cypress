@@ -1,6 +1,6 @@
 const parser = require('conventional-commits-parser').sync;
 
-const changeCatagories = {
+const userFacingChanges = {
   breaking: {
     description: 'A breaking change that will require a MVB',
     title: '**Breaking Changes:**',
@@ -22,12 +22,31 @@ const changeCatagories = {
     title: '**Bugfixes:**',
   },
   misc: {
-    description: ' misc user-facing change, like a UI update, which is not a fix or enhancement to how Cypress works',
+    description: 'Misc user-facing changes, like a UI update, which is not a fix or enhancement to how Cypress works',
     title: '**Misc:**',
   },
   perf: {
-    description: 'A code change that improves performance',
+    description: 'Changes that improves performance',
     title: '**Performance:**',
+  },
+}
+
+const changeCatagories = {
+  ...userFacingChanges,
+  chore: {
+    description: 'Changes to the build process or auxiliary tools and libraries such as documentation generation',
+  },
+  docs: {
+    description: 'Documentation only changes',
+  },
+  refactor: {
+    description: 'A code change that neither fixes a bug nor adds a feature that is not user-facing',
+  },
+  revert: {
+    description: 'Reverts a previous commit',
+  },
+  test: {
+    description: 'Adding missing or correcting existing tests',
   },
 }
 
