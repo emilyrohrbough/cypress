@@ -1,0 +1,14 @@
+{
+  "name": "semantic-pull-request",
+  "version": "0.0.0",
+  "description": "Verify the pull request title and changelog are valid before merging",
+  "private": true,
+  "dependencies": {
+    "@actions/core": "1.10.0",
+    "@actions/github": "5.1.1",
+    "conventional-commits-parser": "3.2.4"
+  },
+  "scripts": {
+    "verify": "node ./index.js"
+  }
+}

@@ -487,6 +487,40 @@ describe('visual error templates', () => {
                 'cypress/integration/app_spec.js',
               ],
             },
+            payload: {},
+          },
+        ],
+        differentParams: [
+          {
+            group: 'foo',
+            runUrl: 'https://cloud.cypress.io/project/abcd/runs/1',
+            ciBuildId: 'test-ciBuildId-123',
+            parameters: {
+              osName: 'darwin',
+              osVersion: 'v1',
+              browserName: 'Electron',
+              browserVersion: '59.1.2.3',
+              specs: [
+                'cypress/integration/app_spec.js',
+                'cypress/integration/foo_spec.js',
+                'cypress/integration/bar_spec.js',
+              ],
+            },
+            payload: {
+              differentParams: {
+                browserName: {
+                  detected: 'Chrome',
+                  expected: 'Electron',
+                },
+                browserVersion: {
+                  detected: '65',
+                  expected: '64',
+                },
+              },
+              differentSpecs: [
+                'cypress/integration/foo_spec.js',
+              ],
+            },
           },
         ],
       }
@@ -1001,6 +1035,11 @@ describe('visual error templates', () => {
         default: [],
       }
     },
+    EXPERIMENTAL_SESSION_AND_ORIGIN_REMOVED: () => {
+      return {
+        default: [],
+      }
+    },
     EXPERIMENTAL_SHADOW_DOM_REMOVED: () => {
       return {
         default: [],
@@ -1159,7 +1198,7 @@ describe('visual error templates', () => {
     },
     MIGRATION_MISMATCHED_CYPRESS_VERSIONS: () => {
       return {
-        default: ['9.6.0'],
+        default: ['9.6.0', '10.0.0'],
       }
     },
     MIGRATION_CYPRESS_NOT_FOUND: () => {
@@ -1221,6 +1260,12 @@ describe('visual error templates', () => {
     BROWSER_UNSUPPORTED_LAUNCH_OPTION: () => {
       return {
         default: ['electron', ['env']],
+      }
+    },
+
+    EXPERIMENTAL_ORIGIN_DEPENDENCIES_E2E_ONLY: () => {
+      return {
+        default: [],
       }
     },
   })
