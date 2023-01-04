@@ -2,7 +2,7 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const validatePrTitle = require('./validatePrTitle');
 
-module.exports = async function run() {
+async function run() {
   try {
     const client = github.getOctokit(process.env.GITHUB_TOKEN, {
       baseUrl: githubBaseUrl
@@ -83,3 +83,5 @@ module.exports = async function run() {
 if (require.main === module) {
   run()
 }
+
+module.exports = run
