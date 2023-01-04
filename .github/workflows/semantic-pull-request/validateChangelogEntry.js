@@ -1,14 +1,12 @@
 const { userFacingChanges } = require('./changeCategories')
 const _ = require('lodash')
 
-function getResolvedMessage(type, linkedIssues) {
+function getResolvedMessage(type, prNumber, linkedIssues) {
   let resolveMessage
   if (linkedIssues.length) {
     const issueMessage = userFacingChanges[type].message.hasIssue
 
     const links = linkedIssues.map((issueNumber) => {
-      issuesInRelease.push(`https://github.com/cypress-io/cypress/issues/${issueNumber}`)
-
       return `[#${issueNumber}](https://github.com/cypress-io/cypress/issues/${issueNumber})`
     })
 
@@ -16,12 +14,12 @@ function getResolvedMessage(type, linkedIssues) {
   } else {
     const prMessage = userFacingChanges[type].message.onlyPR
 
-    resolveMessage = `${prMessage} [#${commit.prNumber}](${prLink}).`
+    resolveMessage = `${prMessage} [#${prNumber}](https://github.com/cypress-io/cypress/pulls/${prNumber}).`
   }
 }
 
-function printChangeLogExample(type, linkedIssues) {
-  const resolveMessage = getResolvedMessage(type, linkedIssues)
+function printChangeLogExample(type, prNumber, linkedIssues) {
+    const resolveMessage = getResolvedMessage(type, prNumber, linkedIssues)
 
   return `${userFacingChanges[type].section}\n - <Insert change details>. ${resolveMessage}`
 }
@@ -66,7 +64,7 @@ module.exports = async function validateChangelogEntry({ github, restParameters,
 
   if (!hasChangeLogUpdate) {
     throw new Error(
-      `A changelog entry was not found in cli/CHANGELOG.md. Please add a changelog entry that describes the changes made in this pull request. Include this entry under the section:/\n\n${printChangeLogExample(semanticResult.type, linkedIssues)}`
+      `A changelog entry was not found in cli/CHANGELOG.md. Please add a changelog entry that describes the changes made in this pull request. Include this entry under the section:/\n\n${printChangeLogExample(semanticResult.type, restParameter.pull_number, linkedIssues)}`
     );
   }
 
