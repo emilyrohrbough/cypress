@@ -9,7 +9,7 @@ const changeLinkPhrases = {
   },
 }
 
-export const userFacingChanges = {
+const userFacingChanges = {
   breaking: {
     description: 'A breaking change that will require a MVB',
     section: '**Breaking Changes:**',
@@ -47,7 +47,7 @@ export const userFacingChanges = {
   },
 }
 
-export const changeCatagories = {
+const changeCatagories = {
   ...userFacingChanges,
   chore: {
     description: 'Changes to the build process or auxiliary tools and libraries such as documentation generation',
@@ -64,4 +64,9 @@ export const changeCatagories = {
   test: {
     description: 'Adding missing or correcting existing tests',
   },
+}
+
+module.exports = {
+  changeCatagories,
+  userFacingChanges
 }
