@@ -77,6 +77,7 @@ module.exports = async function validateChangelogEntry({ github, restParameters,
   // }
 
   const sections = changelog.split(/**[a-zA-Z]+:**/)
+  console.log('sections', sections)
   if (!sections.includes(userFacingChanges[semanticResult.type].section)) {
     throw new Error(`The changelog does not include the ${userFacingChanges[semanticResult.type].section} section. Given the pull request title provided, this section should be included in the changelog. If the changelog section is correct, please correct the pull request title to correctly reflect the change being made.`)
   }
