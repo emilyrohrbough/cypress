@@ -3,6 +3,7 @@ const github = require('@actions/github');
 const validatePrTitle = require('./validatePrTitle');
 const validateChangelogEntry = require('./validateChangelogEntry');
 const execa = require('execa')
+const path = require('path')
 
 async function run() {
   try {
