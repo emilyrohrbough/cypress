@@ -1,6 +1,7 @@
 const { userFacingChanges } = require('./changeCategories')
 const _ = require('lodash')
 const fs = require('fs')
+const path = require('path')
 
 function getResolvedMessage(type, prNumber, linkedIssues) {
   if (linkedIssues.length) {
@@ -68,7 +69,7 @@ module.exports = async function validateChangelogEntry({ github, restParameters,
     );
   }
 
-  const changelog = fs.readFileSync(__dirname, '..', '..', 'cli', 'CHANGELOG.md')
+  const changelog = fs.readFileSync(path.join(__dirname, '..', '..', 'cli', 'CHANGELOG.md'), 'utf8')
   // const nextVersion = await getNextVersionForPath()
 
   // if (!changelog.includes(`## ${nextVersion}`)) {
