@@ -1,5 +1,4 @@
 const { userFacingChanges } = require('./changeCategories')
-const _ = require('lodash')
 const fs = require('fs')
 const path = require('path')
 
@@ -38,7 +37,8 @@ module.exports = async function validateChangelogEntry({ github, restParameters,
     return /^(cli|packages)/.test(filename)
   })
 
-  const hasChangeLogUpdate = pullRequestFiles.includes('cli/CHANGELOG.md')
+  // const hasChangeLogUpdate = pullRequestFiles.includes('cli/CHANGELOG.md')
+  const hasChangeLogUpdate = data.find(fileDetails => fileDetails.filename === 'cli/CHANGELOG.md');
 
   if (binaryFiles.length === 0) {
     console.log("This pull request does not contain changes that impacts the next Cypress release.")
@@ -70,6 +70,10 @@ module.exports = async function validateChangelogEntry({ github, restParameters,
   }
 
   const changelog = fs.readFileSync(path.join(__dirname, '..', '..', '..', 'cli', 'CHANGELOG.md'), 'utf8')
+  console.log("CHANGELOG....", changelog)
+  // const changelog = hasChangeLogUpdate.patch
+  const additions = hasChangeLogUpdate.patch.split('\n').filter(p => p.startsWith('+')).map(p => p.replace('+', '')).join('\n')
+
   // const nextVersion = await getNextVersionForPath()
 
   // if (!changelog.includes(`## ${nextVersion}`)) {
