@@ -4,9 +4,7 @@ const validatePrTitle = require('./validatePrTitle');
 
 async function run() {
   try {
-    const client = github.getOctokit(process.env.GITHUB_TOKEN, {
-      baseUrl: githubBaseUrl
-    });
+    const client = github.getOctokit(process.env.GITHUB_TOKEN);
 
     const contextPullRequest = github.context.payload.pull_request;
     if (!contextPullRequest) {
@@ -22,7 +20,7 @@ async function run() {
     // the user updates the title and re-runs the workflow, it would
     // be outdated. Therefore fetch the pull request via the REST API
     // to ensure we use the current title.
-    const {data: pullRequest} = await client.rest.pulls.get({
+    const { data: pullRequest } = await client.rest.pulls.get({
       owner,
       repo,
       pull_number: contextPullRequest.number
