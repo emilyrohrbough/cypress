@@ -29,7 +29,6 @@ module.exports = async function validateChangelogEntry({ github, restParameters,
   const { data } = await github.rest.pulls.listFiles(restParameters);
   
   const pullRequestFiles = data.map((fileDetails) => {
-    console.log(fileDetails)
     return fileDetails.filename
   })
   

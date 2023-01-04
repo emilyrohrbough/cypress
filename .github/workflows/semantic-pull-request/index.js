@@ -14,6 +14,32 @@ async function run() {
       );
     }
 
+    console.log('Get Current Release Information\n')
+    const { stdout } = await execa('npm', ['info', 'cypress', '--json'])
+    const npmInfo = JSON.parse(stdout)
+
+    const latestReleaseInfo = {
+      version: npmInfo['dist-tags'].latest,
+      commitDate: npmInfo.buildInfo.commitDate,
+      buildSha: npmInfo.buildInfo.commitSha,
+    }
+
+    console.log(latestReleaseInfo)
+
+    const { stdout: currentBranch } = await execa('git', ['branch', '--show-current'])
+
+    console.log(currentBranch)
+
+    const { stdout: commitsChangingCLI } = await execa('git', ['log', `${latestReleaseInfo.buildSha}..`, '--format="%cI %s"', '--', path.join(__dirname, '..', '..', '...', 'cli')])
+    const { stdout: commitsChangingPackages }  = await execa('git', ['log', `${latestReleaseInfo.buildSha}..`, '--format="%cI %s"', '--', path.join(__dirname, '..', '..', '...', 'packages')])
+
+    console.log('\n\ncommitsChangingCLI', commitsChangingCLI)
+    console.log('commitsChangingPackages',commitsChangingPackages)
+
+    const { stdout: changedFiles } = await execa('git', ['diff', '--name-only'])
+    console.log('\n\nchangedFiles', changedFiles)
+
+
     // The pull request info on the context isn't up to date. When
     // the user updates the title and re-runs the workflow, it would
     // be outdated. Therefore fetch the pull request via the REST API
