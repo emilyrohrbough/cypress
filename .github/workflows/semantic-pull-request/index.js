@@ -74,6 +74,7 @@ module.exports = async function run() {
       }
     }
   } catch (error) {
+    console.log("Fail check....")
     core.setFailed(error.message);
   }
 };

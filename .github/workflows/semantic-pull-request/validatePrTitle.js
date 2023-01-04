@@ -48,8 +48,11 @@ const parserOpts = {
 }
 
 module.exports = async function validatePrTitle(prTitle) {
-
   const result = parser(prTitle, parserOpts)
+
+  console.log('Validate PR Tile for:', prTitle)
+  console.log('Result:', result)
+
 
   function printAvailableTypes() {
     return `Available types:\n${types
