@@ -68,7 +68,7 @@ module.exports = async function validateChangelogEntry({ github, restParameters,
     );
   }
 
-  const changelog = fs.readFileSync(dirname, '..', '..', 'cli', 'CHANGELOG.md')
+  const changelog = fs.readFileSync(__dirname, '..', '..', 'cli', 'CHANGELOG.md')
   // const nextVersion = await getNextVersionForPath()
 
   // if (!changelog.includes(`## ${nextVersion}`)) {
