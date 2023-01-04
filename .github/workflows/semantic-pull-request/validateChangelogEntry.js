@@ -1,5 +1,6 @@
 const { userFacingChanges } = require('./changeCategories')
 const _ = require('lodash')
+const fs = require('fs')
 
 function getResolvedMessage(type, prNumber, linkedIssues) {
   if (linkedIssues.length) {
