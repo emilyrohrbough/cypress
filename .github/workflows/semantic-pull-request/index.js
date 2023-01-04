@@ -1,7 +1,7 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const validatePrTitle = require('./validatePrTitle');
-const validateChangelog = require('./validateChangelog');
+const validateChangelogEntry = require('./validateChangelogEntry');
 
 async function run() {
   try {
@@ -52,7 +52,7 @@ async function run() {
 
     const linkedIssues = getIssueNumbers(pullRequest.body)
 
-    await validateChangelog({
+    await validateChangelogEntry({
       github: client,
       restParameters,
       semanticResult,

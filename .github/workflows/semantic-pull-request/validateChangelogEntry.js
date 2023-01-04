@@ -28,7 +28,7 @@ function printChangeLogExample(type, linkedIssues) {
 
 module.exports = async function validateChangelogEntry({ github, restParameters, semanticResult, linkedIssues }) {
   // gh pr view https://github.com/emilyrohrbough/cypress/pull/4 --json files
-  const { data } = await client.rest.pulls.listFiles(prData);
+  const { data } = await github.rest.pulls.listFiles(restParameters);
   
   const pullRequestFiles = data.map((fileDetails) => {
     console.log(fileDetails)
