@@ -64,7 +64,7 @@ module.exports = async function validateChangelogEntry({ github, restParameters,
 
   if (!hasChangeLogUpdate) {
     throw new Error(
-      `A changelog entry was not found in cli/CHANGELOG.md. Please add a changelog entry that describes the changes made in this pull request. Include this entry under the section:/\n\n${printChangeLogExample(semanticResult.type, restParameter.pull_number, linkedIssues)}`
+      `A changelog entry was not found in cli/CHANGELOG.md. Please add a changelog entry that describes the changes made in this pull request. Include this entry under the section:/\n\n${printChangeLogExample(semanticResult.type, restParameters.pull_number, linkedIssues)}`
     );
   }
 
