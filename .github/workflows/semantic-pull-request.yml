@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+          with:
+            ref: ${{ github.event.pull_request.head.sha }}
       - name: Lint PR Title
         run: |
           npm install && npm run verify
