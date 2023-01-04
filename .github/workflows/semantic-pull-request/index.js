@@ -47,7 +47,7 @@ async function run() {
         issues.push(issue.match(/\d+/)[0])
       })
     
-      return _.uniq(issues)
+      return issues.filter((v, i, a) => a.indexOf(v) === i)
     }
 
     const linkedIssues = getIssueNumbers(pullRequest.body)
