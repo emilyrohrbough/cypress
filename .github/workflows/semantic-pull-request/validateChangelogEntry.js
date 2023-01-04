@@ -2,7 +2,6 @@ const { userFacingChanges } = require('./changeCategories')
 const _ = require('lodash')
 
 function getResolvedMessage(type, prNumber, linkedIssues) {
-  let resolveMessage
   if (linkedIssues.length) {
     const issueMessage = userFacingChanges[type].message.hasIssue
 
@@ -10,16 +9,16 @@ function getResolvedMessage(type, prNumber, linkedIssues) {
       return `[#${issueNumber}](https://github.com/cypress-io/cypress/issues/${issueNumber})`
     })
 
-    resolveMessage = `${issueMessage} ${links.join(',')}.`
-  } else {
-    const prMessage = userFacingChanges[type].message.onlyPR
-
-    resolveMessage = `${prMessage} [#${prNumber}](https://github.com/cypress-io/cypress/pulls/${prNumber}).`
+    return `${issueMessage} ${links.join(',')}.`
   }
+  
+  const prMessage = userFacingChanges[type].message.onlyPR
+
+  return `${prMessage} [#${prNumber}](https://github.com/cypress-io/cypress/pulls/${prNumber}).`
 }
 
 function printChangeLogExample(type, prNumber, linkedIssues) {
-    const resolveMessage = getResolvedMessage(type, prNumber, linkedIssues)
+  const resolveMessage = getResolvedMessage(type, prNumber, linkedIssues)
 
   return `${userFacingChanges[type].section}\n - <Insert change details>. ${resolveMessage}`
 }
