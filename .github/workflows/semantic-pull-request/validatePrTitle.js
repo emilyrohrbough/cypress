@@ -1,54 +1,5 @@
-const parser = require('conventional-commits-parser').sync;
-
-const userFacingChanges = {
-  breaking: {
-    description: 'A breaking change that will require a MVB',
-    title: '**Breaking Changes:**',
-  },
-  dependency: {
-    description: 'A change to a dependency that impact the user',
-    title: '**Dependency Updates:**',
-  },
-  deprecation: {
-    description: 'A API deprecation notice for users',
-    title: '**Deprecations:**',
-  },
-  feat: {
-    description: 'A new feature',
-    title: '**Features:**',
-  },
-  fix: {
-    description: 'A bug or regression fix',
-    title: '**Bugfixes:**',
-  },
-  misc: {
-    description: 'Misc user-facing changes, like a UI update, which is not a fix or enhancement to how Cypress works',
-    title: '**Misc:**',
-  },
-  perf: {
-    description: 'Changes that improves performance',
-    title: '**Performance:**',
-  },
-}
-
-const changeCatagories = {
-  ...userFacingChanges,
-  chore: {
-    description: 'Changes to the build process or auxiliary tools and libraries such as documentation generation',
-  },
-  docs: {
-    description: 'Documentation only changes',
-  },
-  refactor: {
-    description: 'A code change that neither fixes a bug nor adds a feature that is not user-facing',
-  },
-  revert: {
-    description: 'Reverts a previous commit',
-  },
-  test: {
-    description: 'Adding missing or correcting existing tests',
-  },
-}
+const parser = require('conventional-commits-parser').sync
+const { changeCatagories } = require('./changeCategories')
 
 const types = Object.keys(changeCatagories)
 
@@ -66,33 +17,77 @@ const parserOpts = {
   issuePrefixes: ['#']
 }
 
-module.exports = async function validatePrTitle(prTitle) {
+async function validateTitle(prTitle) {
   const result = parser(prTitle, parserOpts)
-
-  console.log('Validate PR Tile for:', prTitle)
-  console.log('Result:', result)
-
 
   function printAvailableTypes() {
     return `Available types:\n${types
       .map((type) => ` - ${type}: ${changeCatagories[type].description}`)
-      .join('\n')}`;
+      .join('\n')}`
   }
 
   if (!result.type) {
     throw new Error(
       `No release type found in pull request title "${prTitle}". Add a prefix to indicate what kind of release this pull request corresponds to. Cypress types are:/\n\n${printAvailableTypes()}`
-    );
+    )
   }
 
   if (!result.subject) {
-    throw new Error(`No subject found in pull request title "${prTitle}".`);
+    throw new Error(`No subject found in pull request title "${prTitle}".`)
   }
 
   if (!types.includes(result.type)) {
     throw new Error(
       `Unknown release type "${result.type}" found in pull request title "${prTitle}".
       \n\n${printAvailableTypes()}`
-    );
+    )
   }
-};
+
+  return result
+}
+
+module.exports = async function validatePrTitle({ github, prTitle, restParameters }) {
+  let result = await validateTitle(prTitle);
+
+  const commits = [];
+  let nonMergeCommits = [];
+
+  for await (const response of github.paginate.iterator(
+    github.rest.pulls.listCommits,
+    restParameters
+  )) {
+    commits.push(...response.data);
+
+    // GitHub does not count merge commits when deciding whether to use
+    // the PR title or a commit message for the squash commit message.
+    nonMergeCommits = commits.filter(
+      (commit) => commit.parents.length < 2
+    );
+
+    // We only need two non-merge commits to know that the PR
+    // title won't be used.
+    if (nonMergeCommits.length >= 2) break;
+  }
+
+  // If there is only one (non merge) commit present, GitHub will use
+  // that commit rather than the PR title for the title of a squash
+  // commit. To make sure a semantic title is used for the squash
+  // commit, we need to validate the commit title.
+  if (nonMergeCommits.length === 1) {
+    try {
+      result = await validateTitle(nonMergeCommits[0].commit.message, {
+        types,
+        scopes,
+        requireScope,
+        subjectPattern,
+        subjectPatternError
+      });
+    } catch (error) {
+      throw new Error(
+        `Pull request has only one commit and it's not semantic; this may lead to a non-semantic commit in the base branch (see https://github.community/t/how-to-change-the-default-squash-merge-commit-message/1155). Amend the commit message to match the pull request title, or add another commit.`
+      );
+    }
+  }
+
+  return result
+}
