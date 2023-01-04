@@ -17,7 +17,7 @@ jobs:
       - name: Lint PR Title
         run: |
           npm install && npm run verify
-        working-directory: ./.github/actions/triage/
+        working-directory: .github/actions/triage/
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
