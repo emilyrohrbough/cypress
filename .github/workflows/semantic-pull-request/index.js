@@ -78,3 +78,8 @@ module.exports = async function run() {
     core.setFailed(error.message);
   }
 };
+
+// execute main function if called from command line
+if (require.main === module) {
+  run()
+}
