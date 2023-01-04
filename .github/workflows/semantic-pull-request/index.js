@@ -2,6 +2,7 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const validatePrTitle = require('./validatePrTitle');
 const validateChangelogEntry = require('./validateChangelogEntry');
+const execa = require('execa')
 
 async function run() {
   try {
