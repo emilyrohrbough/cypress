@@ -14,10 +14,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Hello world action step
-        uses: ./github/workflows/semantic-pull-request # Uses an action in the root directory
+      - name: Lint PR Title
+        run: |
+          npm install && npm run verify
+        working-directory: ./.github/actions/triage/
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       # use a fork of the GitHub action - we cannot pull in untrusted third party actions
       # see https://github.com/cypress-io/cypress/pull/20091#discussion_r801799647
       # - uses: cypress-io/action-semantic-pull-request@v4
