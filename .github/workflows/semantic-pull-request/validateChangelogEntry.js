@@ -76,14 +76,12 @@ module.exports = async function validateChangelogEntry({ github, restParameters,
   //   throw new Error(`The changelog version does not contain the next Cypress version of ${nextVersion}. If the changelog version is correct, please correct the pull request title to correctly reflect the change being made.`)
   // }
 
-  const sections = changelog.split(/**[a-zA-Z]+:**/)
-  console.log('sections', sections)
-  if (!sections.includes(userFacingChanges[semanticResult.type].section)) {
+  if (!changelog.includes(userFacingChanges[semanticResult.type].section)) {
     throw new Error(`The changelog does not include the ${userFacingChanges[semanticResult.type].section} section. Given the pull request title provided, this section should be included in the changelog. If the changelog section is correct, please correct the pull request title to correctly reflect the change being made.`)
   }
 
   const resolveMessage = getResolvedMessage(semanticResult.type, restParameters.pull_number, linkedIssues)
-  if (!sections.includes(resolveMessage)) {
+  if (!changelog.includes(resolveMessage)) {
     if (linkedIssues.length) {
       throw new Error(`The changelog entry does not include the linked issues that this pull request resolves. Please update your entry to include:\n\n${resolveMessage}`)
     }
