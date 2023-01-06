@@ -17,7 +17,8 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           # ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 2147483647
+          fetch-depth: 0
+          # fetch-depth: 2147483647
       - name: Lint PR Title
         run: |
           env && npm install && npm run verify
