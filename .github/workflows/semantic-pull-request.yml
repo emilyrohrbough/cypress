@@ -15,14 +15,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          # ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 2147483647
       - name: Lint PR Title
         run: |
           env && npm install && npm run verify
         working-directory: .github/workflows/semantic-pull-request/
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_BASE_REF: ${{ github.event.pull_request.base.ref }}
       # use a fork of the GitHub action - we cannot pull in untrusted third party actions
       # see https://github.com/cypress-io/cypress/pull/20091#discussion_r801799647
       # - uses: cypress-io/action-semantic-pull-request@v4
