@@ -31,6 +31,9 @@ module.exports = async function validateChangelogEntry({ github, restParameters,
   const pullRequestFiles = data.map((fileDetails) => {
     return fileDetails.filename
   })
+
+  console.log("base branch", process.env.GIT_BASE_REF)
+
   
   const binaryFiles = pullRequestFiles.filter((filename) => {
     return /^(cli|packages)/.test(filename)
@@ -70,7 +73,6 @@ module.exports = async function validateChangelogEntry({ github, restParameters,
 
   const changelog = fs.readFileSync(path.join(__dirname, '..', '..', '..', 'cli', 'CHANGELOG.md'), 'utf8')
   console.log("CHANGELOG....", changelog)
-  // const changelog = hasChangeLogUpdate.patch
   const additions = hasChangeLogUpdate.patch.split('\n').filter(p => p.startsWith('+')).map(p => p.replace('+', '')).join('\n')
 
   // const nextVersion = await getNextVersionForPath()
@@ -78,6 +80,7 @@ module.exports = async function validateChangelogEntry({ github, restParameters,
   // if (!changelog.includes(`## ${nextVersion}`)) {
   //   throw new Error(`The changelog version does not contain the next Cypress version of ${nextVersion}. If the changelog version is correct, please correct the pull request title to correctly reflect the change being made.`)
   // }
+
 
   if (!changelog.includes(userFacingChanges[semanticResult.type].section)) {
     throw new Error(`The changelog does not include the ${userFacingChanges[semanticResult.type].section} section. Given the pull request title provided, this section should be included in the changelog. If the changelog section is correct, please correct the pull request title to correctly reflect the change being made.`)
