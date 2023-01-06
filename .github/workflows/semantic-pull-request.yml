@@ -18,8 +18,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Lint PR Title
         run: |
-          env
-          npm install && npm run verify
+          env && npm install && npm run verify
         working-directory: .github/workflows/semantic-pull-request/
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
