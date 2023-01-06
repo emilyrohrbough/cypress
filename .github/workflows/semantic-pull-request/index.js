@@ -38,8 +38,9 @@ async function run() {
     console.log('\n\ncommitsChangingCLI', commitsChangingCLI)
     console.log('commitsChangingPackages',commitsChangingPackages)
 
-    const { stdout: changedFiles } = await execa('git', ['diff', '--name-only'])
+    const { stdout: changedFiles, stderr } = await execa('git', ['diff', '--name-only'])
     console.log('\n\nchangedFiles', changedFiles)
+    console.log('\n\nchangedFiles', stderr)
 
 
     // The pull request info on the context isn't up to date. When
