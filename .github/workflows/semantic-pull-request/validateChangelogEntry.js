@@ -74,7 +74,7 @@ module.exports = async function validateChangelogEntry({ github, restParameters,
 
   const changelog = fs.readFileSync(path.join(__dirname, '..', '..', '..', 'cli', 'CHANGELOG.md'), 'utf8')
   console.log("CHANGELOG....", changelog)
-  const additions = hasChangeLogUpdate.patch.split('\n').filter(p => p.startsWith('+')).map(p => p.replace('+', '')).join('\n')
+  // const additions = hasChangeLogUpdate.patch.split('\n').filter(p => p.startsWith('+')).map(p => p.replace('+', '')).join('\n')
 
   // const nextVersion = await getNextVersionForPath()
 
