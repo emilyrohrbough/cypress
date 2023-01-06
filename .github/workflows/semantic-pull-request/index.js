@@ -32,11 +32,11 @@ async function run() {
 
     console.log({currentBranch})
 
-    // const { stdout: commitsChangingCLI } = await execa('git', ['log', `${latestReleaseInfo.buildSha}..`, '--format="%cI %s"', '--', path.join(__dirname, '..', '..', '...', 'cli')])
-    // const { stdout: commitsChangingPackages }  = await execa('git', ['log', `${latestReleaseInfo.buildSha}..`, '--format="%cI %s"', '--', path.join(__dirname, '..', '..', '...', 'packages')])
+    const { stdout: commitsChangingCLI } = await execa('git', ['log', `${latestReleaseInfo.buildSha}..`, '--format="%cI %s"', '--', path.join(__dirname, '..', '..', '...', 'cli')])
+    const { stdout: commitsChangingPackages }  = await execa('git', ['log', `${latestReleaseInfo.buildSha}..`, '--format="%cI %s"', '--', path.join(__dirname, '..', '..', '...', 'packages')])
 
-    // console.log('\n\ncommitsChangingCLI', commitsChangingCLI)
-    // console.log('commitsChangingPackages',commitsChangingPackages)
+    console.log('\n\ncommitsChangingCLI', commitsChangingCLI)
+    console.log('commitsChangingPackages',commitsChangingPackages)
 
     const { stdout: changedFiles } = await execa('git', ['diff', '--name-only'])
     console.log('\n\nchangedFiles', changedFiles)
