@@ -14,11 +14,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
+        # with:
+          # ref: ${{ github.event.pull_request.head.ref }}
           # ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
-          # fetch-depth: 2147483647
+          # fetch-depth: 0
+          fetch-depth: 2147483647
+      - run: git checkout ${{ GITHUB_HEAD_BRANCH }}
       - name: Lint PR Title
         run: |
           env && npm install && npm run verify
