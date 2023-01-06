@@ -15,7 +15,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          # ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 2147483647
       - name: Lint PR Title
         run: |
           env && npm install && npm run verify
