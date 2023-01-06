@@ -26,6 +26,7 @@ jobs:
         working-directory: .github/workflows/semantic-pull-request/
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
       # use a fork of the GitHub action - we cannot pull in untrusted third party actions
       # see https://github.com/cypress-io/cypress/pull/20091#discussion_r801799647
       # - uses: cypress-io/action-semantic-pull-request@v4
