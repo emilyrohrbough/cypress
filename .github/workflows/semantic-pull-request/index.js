@@ -38,7 +38,7 @@ async function run() {
     // console.log('\n\ncommitsChangingCLI', commitsChangingCLI)
     // console.log('commitsChangingPackages',commitsChangingPackages)
 
-    const { stdout: changedFiles, stderr } = await execa('git', ['diff', `${process.env.GITHUB_BASE_REF}..${GITHUB_HEAD_REF}`, '--name-only'])
+    const { stdout: changedFiles, stderr } = await execa('git', ['diff', `${process.env.GITHUB_BASE_REF}..${process.env.GITHUB_HEAD_REF}`, '--name-only'])
     console.log('\n\nchangedFiles', changedFiles)
     console.log('\n\nchangedFiles', stderr)
 
