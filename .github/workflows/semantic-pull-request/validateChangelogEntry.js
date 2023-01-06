@@ -32,7 +32,8 @@ module.exports = async function validateChangelogEntry({ github, restParameters,
     return fileDetails.filename
   })
 
-  console.log("base branch", process.env.GIT_BASE_REF)
+  console.log("current branch", process.env.GITHUB_HEAD_REF)
+  console.log("base branch", process.env.GITHUB_BASE_REF)
 
   
   const binaryFiles = pullRequestFiles.filter((filename) => {
