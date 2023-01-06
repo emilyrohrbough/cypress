@@ -17,8 +17,8 @@ jobs:
         with:
           # ref: ${{ github.event.pull_request.head.ref }}
           # ref: ${{ github.event.pull_request.head.sha }}
-          # fetch-depth: 0
-          fetch-depth: 2147483647
+          fetch-depth: 0
+          # fetch-depth: 2147483647
       - run: git checkout $GITHUB_HEAD_REF
       - name: Lint PR Title
         run: |
