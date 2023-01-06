@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          # ref: ${{ github.event.pull_request.head.ref }}
+          ref: ${{ github.event.pull_request.base.ref }}
           # ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
           # fetch-depth: 2147483647
