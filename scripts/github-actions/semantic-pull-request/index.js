@@ -1,19 +1,44 @@
-const core = require('@actions/core');
-const github = require('@actions/github');
-const validatePrTitle = require('./validatePrTitle');
-const validateChangelogEntry = require('./validateChangelogEntry');
+/* eslint-disable no-console */
+const core = require('@actions/core')
+const github = require('@actions/github')
+const validatePrTitle = require('./validatePrTitle')
+const validateChangelogEntry = require('./validateChangelogEntry')
 const execa = require('execa')
-const path = require('path')
 
-async function run() {
+// Semantic Pull Request:
+
+// PR into develop or feature branch:
+//   - check PR title
+//   - check for packages/cli file changes. If YES - verify changelog entry for user-facing commits
+//      - an entry must be added under the correct change section
+//      - an entry must include links with associated issues or a link to PR if no issues
+//      - ignore changelog removals/changes even if commit doesn't match (i.e. type / grammar fix)
+
+// PR into release branch:
+//   - check PR title
+//   - check for packages/cli file changes. If YES - verify changelog entry for user-facing commits
+//      - an entry must be added under the correct change section
+//      - an entry must include links with associated issues or a link to PR if no issues
+//      - ignore changelog removals/changes even if commit doesn't match (i.e. type / grammar fix)
+//
+
+// Verifying develop branch:
+//   - check each commit for packages/cli file changes. If YES - verify changelog entry for user-facing commits messages
+//      - an entry must be added under the correct change section
+//      - an entry must include links with associated issues or a link to PR if no issues
+//      - if an commit is missing an entry, fail
+//      - ignore changelog removals/changes even if commit doesn't match (i.e. type / grammar fix)
+//
+async function run () {
   try {
-    const client = github.getOctokit(process.env.GITHUB_TOKEN);
+    const client = github.getOctokit(process.env.GITHUB_TOKEN)
 
-    const contextPullRequest = github.context.payload.pull_request;
+    const contextPullRequest = github.context.payload.pull_request
+
     if (!contextPullRequest) {
       throw new Error(
-        "This action can only be invoked in `pull_request_target` or `pull_request` events. Otherwise the pull request can't be inferred."
-      );
+        'This action can only be invoked in `pull_request_target` or `pull_request` events. Otherwise the pull request can\'t be inferred.',
+      )
     }
 
     console.log('Get Current Release Information\n')
@@ -30,7 +55,7 @@ async function run() {
 
     const { stdout: currentBranch } = await execa('git', ['branch', '--show-current'])
 
-    console.log({currentBranch})
+    console.log({ currentBranch })
 
     // const { stdout: commitsChangingCLI } = await execa('git', ['log', `${latestReleaseInfo.buildSha}..`, '--format="%cI %s"', '--', path.join('..', '..', '...', 'cli')])
     // const { stdout: commitsChangingPackages }  = await execa('git', ['log', `${latestReleaseInfo.buildSha}..`, '--format="%cI %s"', '--', path.join('..', '..', '...', 'packages')])
@@ -39,9 +64,9 @@ async function run() {
     // console.log('commitsChangingPackages',commitsChangingPackages)
 
     const { stdout: changedFiles, stderr } = await execa('git', ['diff', `${process.env.GITHUB_BASE_REF}..${process.env.GITHUB_HEAD_REF}`, '--name-only'])
+
     console.log('\n\nchangedFiles', changedFiles)
     console.log('\n\nchangedFiles', stderr)
-
 
     // The pull request info on the context isn't up to date. When
     // the user updates the title and re-runs the workflow, it would
@@ -50,9 +75,9 @@ async function run() {
     const restParameters = {
       owner: contextPullRequest.base.user.login,
       repo: contextPullRequest.base.repo.name,
-      pull_number: contextPullRequest.number
+      pull_number: contextPullRequest.number,
     }
-    const { data: pullRequest } = await client.rest.pulls.get(restParameters);
+    const { data: pullRequest } = await client.rest.pulls.get(restParameters)
 
     const semanticResult = await validatePrTitle({
       github: client,
@@ -63,19 +88,19 @@ async function run() {
     const getIssueNumbers = (body) => {
       // remove markdown comments
       body.replace(/(<!--.*?-->)|(<!--[\S\s]+?-->)|(<!--[\S\s]*?$)/g, '')
-    
+
       const references = body.match(/(close[sd]?|fix(es|ed)?|resolve[ed]?) #\d+/gi)
-    
+
       if (!references) {
         return []
       }
-    
+
       const issues = []
-    
+
       references.forEach((issue) => {
         issues.push(issue.match(/\d+/)[0])
       })
-    
+
       return issues.filter((v, i, a) => a.indexOf(v) === i)
     }
 
@@ -85,12 +110,12 @@ async function run() {
       github: client,
       restParameters,
       semanticResult,
-      linkedIssues
+      linkedIssues,
     })
   } catch (error) {
-    core.setFailed(error.message);
+    core.setFailed(error.message)
   }
-};
+}
 
 // execute main function if called from command line
 if (require.main === module) {
