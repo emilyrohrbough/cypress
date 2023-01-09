@@ -80,7 +80,7 @@ const changeCatagories = {
   },
 }
 
-const releaseRules = changeCatagories.entries.map(([type, attrs]) => {
+const releaseRules = Object.entries(changeCatagories).map(([type, attrs]) => {
   return {
     type,
     breaking: attrs.breaking,
