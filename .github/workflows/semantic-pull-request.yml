@@ -12,10 +12,17 @@ jobs:
     name: Lint Title
     runs-on: ubuntu-latest
     steps:
-      # use a fork of the GitHub action - we cannot pull in untrusted third party actions
-      # see https://github.com/cypress-io/cypress/pull/20091#discussion_r801799647
-      - uses: cypress-io/action-semantic-pull-request@v4
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+          # ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          # fetch-depth: 2147483647
+      - run: git checkout $GITHUB_HEAD_REF
+      - name: Lint PR Title
+        run: |
+          env && npm install && npm run verify
+        working-directory: scripts/github-actions/semantic-pull-request/
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          validateSingleCommit: true

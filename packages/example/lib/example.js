@@ -31,6 +31,10 @@ module.exports = {
   getPathToTsConfig() {
     return path.resolve(__dirname, '..', 'cypress', 'tsconfig.json')
   },
+  
+  getPathToTsConfigFAKECHANGE() {
+    return path.resolve(__dirname, '..', 'cypress', 'tsconfig.json')
+  },
 
   getPathToFixture() {
     return path.resolve(__dirname, '..', 'cypress', 'fixtures', 'example.json')
