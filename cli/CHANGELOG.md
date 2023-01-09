@@ -1,10 +1,4 @@
-# UNRELEASED
-
-## 12.2.0
-
-_Released xx-xx-xxxx_
-
-
-**Features:**
 
 **Bugfixes:**
+- Fixes [#5](https://github.com/cypress-io/cypress/issues/5).
+ 

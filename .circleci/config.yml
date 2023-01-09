@@ -26,7 +26,7 @@ jobs:
             LAST_COMMIT_MESSAGE=$(curl --silent "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commits/${CIRCLE_BRANCH}" | jq '.commit.message')
 
             if [[ "$LAST_COMMIT_MESSAGE" =~ "run ci" ]]; then
-              echo "Always run CI when the commit message includes 'run ci'."
+              echo "Running CI; branch in progress but included run ci in commit message"
               exit 0
             fi
 
@@ -48,23 +48,33 @@ jobs:
               echo "Always run CI for PR that is ready for review."
               exit 0
             fi
-
-            echo "Skipping CI; branch in progress - $TRIGGER_INSTRUCTIONS"
-            cancel_build
-
       - run:
-          name: Download .circleci/workflows.yaml
-          command: |
-            if [[ "$CIRCLE_BRANCH" == "pull/"* ]]; then
-              curl -o workflows.yml https://raw.githubusercontent.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/develop/.circleci/workflows.yml
-            else 
-              curl -o workflows.yml https://raw.githubusercontent.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}/.circleci/workflows.yml
-            fi
-      - continuation/continue:
-          configuration_path: workflows.yml
+          command: echo 'step 2'
+
+    
+      # - run:
+      #     name: Download .circleci/workflows.yaml
+      #     command: |
+      #       if [[ "$CIRCLE_BRANCH" == "pull/"* ]]; then
+      #         curl -o workflows.yml https://raw.githubusercontent.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/develop/.circleci/workflows.yml
+      #       else 
+      #         curl -o workflows.yml https://raw.githubusercontent.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}/.circleci/workflows.yml
+      #       fi
+      # - continuation/continue:
+      #     configuration_path: workflows.yml
+  build:
+    docker:
+      - image: cimg/node:current
+    steps:
+      - run:
+          command: echo 'step 2'
+
+
 
 workflows:
   # the setup-workflow workflow is always triggered.
   setup-workflow:
     jobs:
       - verify-ci-should-run
+      - build:
+          requires: verify-ci-should-run

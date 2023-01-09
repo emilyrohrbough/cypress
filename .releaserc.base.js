@@ -1,7 +1,18 @@
+const { parserOpts, releaseRules } = require('./github/workflows/semantic-pull-request/changeCategories')
+
 module.exports = {
   plugins: [
-    '@semantic-release/commit-analyzer',
-    '@semantic-release/release-notes-generator',
+    ['@semantic-release/commit-analyzer', {
+      preset: 'angular',
+      parserOpts,
+      releaseRules,
+    }],
+    ['@semantic-release/release-notes-generator',
+      {
+        preset: 'angular',
+        parserOpts,
+      }
+    ],
     ['@semantic-release/changelog', {
       changelogFile: 'CHANGELOG.md',
     }],
