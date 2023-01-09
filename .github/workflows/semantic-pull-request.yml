@@ -23,6 +23,6 @@ jobs:
       - name: Lint PR Title
         run: |
           env && npm install && npm run verify
-        working-directory: ./scripts/github-actions/semantic-pull-request
+        working-directory: scripts/github-actions/semantic-pull-request/
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
