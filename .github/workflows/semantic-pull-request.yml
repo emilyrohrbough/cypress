@@ -22,6 +22,6 @@ jobs:
         uses: actions/github-script@v4
         with:
           script: |
-          const { run } = require('./scripts/github-actions/semantic-pull-request')
+            const { run } = require('./scripts/github-actions/semantic-pull-request')
 
-          await run({ context, core, github })
+            await run({ context, core, github })
