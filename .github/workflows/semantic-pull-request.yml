@@ -1,4 +1,4 @@
-name: "Semantic Pull Request"
+name: "Semantic Commit Messages"
 
 on:
   pull_request_target:
@@ -6,10 +6,15 @@ on:
       - opened
       - edited
       - synchronize
+  push:
+    branches:
+      - develop
+      - emily/changelog
+      - /^release\/\d+\.\d+\.\d+$/
 
 jobs:
   main:
-    name: Lint PR Title and Binary Changelog
+    name: Semantic Commit Messages
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -18,10 +23,21 @@ jobs:
           ref: ${{ github.event.pull_request.base.ref }}
           fetch-depth: 0
       - run: git checkout $GITHUB_HEAD_REF
+     - run: npm install
+        working-directory: scripts/github-actions/semantic-pull-request/
       - name: Lint PR Title and Binary Changelog
+        # if: github.event.pull_request == true
         uses: actions/github-script@v4
         with:
           script: |
             const { run } = require('./scripts/github-actions/semantic-pull-request')
+
+            await run({ context, core, github })
+      - name: Lint Binary Changelog
+        # if: github.event.push == true
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const { run } = require('./scripts/github-actions/semantic-pull-request/semantic-default-branch')
 
             await run({ context, core, github })
