@@ -1,6 +1,4 @@
 /* eslint-disable no-console */
-const core = require('@actions/core')
-const github = require('@actions/github')
 const { validatePrTitle } = require('./validatePrTitle')
 const { validateChangelogEntry } = require('./validateChangelogEntry')
 const execa = require('execa')
@@ -29,11 +27,9 @@ const execa = require('execa')
 //      - if an commit is missing an entry, fail
 //      - ignore changelog removals/changes even if commit doesn't match (i.e. type / grammar fix)
 //
-async function run () {
+async function run ({ context, core, github }) {
   try {
-    const client = github.getOctokit(process.env.GITHUB_TOKEN)
-
-    const contextPullRequest = github.context.payload.pull_request
+    const contextPullRequest = context.payload.pull_request
 
     if (!contextPullRequest) {
       throw new Error(
@@ -53,9 +49,9 @@ async function run () {
 
     console.log(latestReleaseInfo)
 
-    const { stdout: currentBranch } = await execa('git', ['branch', '--show-current'])
+    // const { stdout: currentBranch } = await execa('git', ['branch', '--show-current'])
 
-    console.log({ currentBranch })
+    // console.log({ currentBranch })
 
     // const { stdout: commitsChangingCLI } = await execa('git', ['log', `${latestReleaseInfo.buildSha}..`, '--format="%cI %s"', '--', path.join('..', '..', '...', 'cli')])
     // const { stdout: commitsChangingPackages }  = await execa('git', ['log', `${latestReleaseInfo.buildSha}..`, '--format="%cI %s"', '--', path.join('..', '..', '...', 'packages')])
@@ -63,10 +59,14 @@ async function run () {
     // console.log('\n\ncommitsChangingCLI', commitsChangingCLI)
     // console.log('commitsChangingPackages',commitsChangingPackages)
 
-    const { stdout: changedFiles, stderr } = await execa('git', ['diff', `${process.env.GITHUB_BASE_REF}..${process.env.GITHUB_HEAD_REF}`, '--name-only'])
+    // const { stdout: changedFiles, stderr } = await execa('git', ['diff', `${process.env.GITHUB_BASE_REF}..${process.env.GITHUB_HEAD_REF}`, '--name-only'])
 
-    console.log('\n\nchangedFiles', changedFiles)
-    console.log('\n\nchangedFiles', stderr)
+    // console.log('\n\nchangedFiles', changedFiles)
+    // console.log('\n\nchangedFiles', stderr)
+
+    // const { stdout: releaseReadyFiles } = await execa('git', ['diff', `${npmInfo.buildInfo.commitSha}..${process.env.GITHUB_BASE_REF}`, '--name-only'])
+
+    // console.log('\n\releaseReadyFiles', releaseReadyFiles)
 
     // The pull request info on the context isn't up to date. When
     // the user updates the title and re-runs the workflow, it would
@@ -77,16 +77,17 @@ async function run () {
       repo: contextPullRequest.base.repo.name,
       pull_number: contextPullRequest.number,
     }
-    const { data: pullRequest } = await client.rest.pulls.get(restParameters)
+
+    const { data: pullRequest } = await github.pulls.get(restParameters)
 
     const semanticResult = await validatePrTitle({
-      github: client,
+      github,
       restParameters,
       prTitle: pullRequest.title,
     })
 
     await validateChangelogEntry({
-      github: client,
+      github,
       restParameters,
       semanticResult,
       body: pullRequest.body,

@@ -39,7 +39,7 @@ async function validatePrTitle ({ github, prTitle, restParameters }) {
   let nonMergeCommits = []
 
   for await (const response of github.paginate.iterator(
-    github.rest.pulls.listCommits,
+    github.pulls.listCommits,
     restParameters,
   )) {
     commits.push(...response.data)
