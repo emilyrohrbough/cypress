@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 const core = require('@actions/core')
 const github = require('@actions/github')
-const validatePrTitle = require('./validatePrTitle')
-const validateChangelogEntry = require('./validateChangelogEntry')
+const { validatePrTitle } = require('./validatePrTitle')
+const { validateChangelogEntry } = require('./validateChangelogEntry')
 const execa = require('execa')
 
 // Semantic Pull Request:
@@ -85,32 +85,11 @@ async function run () {
       prTitle: pullRequest.title,
     })
 
-    const getIssueNumbers = (body) => {
-      // remove markdown comments
-      body.replace(/(<!--.*?-->)|(<!--[\S\s]+?-->)|(<!--[\S\s]*?$)/g, '')
-
-      const references = body.match(/(close[sd]?|fix(es|ed)?|resolve[ed]?) #\d+/gi)
-
-      if (!references) {
-        return []
-      }
-
-      const issues = []
-
-      references.forEach((issue) => {
-        issues.push(issue.match(/\d+/)[0])
-      })
-
-      return issues.filter((v, i, a) => a.indexOf(v) === i)
-    }
-
-    const linkedIssues = getIssueNumbers(pullRequest.body)
-
     await validateChangelogEntry({
       github: client,
       restParameters,
       semanticResult,
-      linkedIssues,
+      body: pullRequest.body,
     })
   } catch (error) {
     core.setFailed(error.message)
