@@ -6,14 +6,6 @@ const path = require('path')
 
 async function run ({ context, core, github }) {
   try {
-    const contextPullRequest = context.payload.branch
-
-    if (!contextPullRequest) {
-      throw new Error(
-        'This action can only be invoked in `pull_request_target` or `pull_request` events. Otherwise the pull request can\'t be inferred.',
-      )
-    }
-
     console.log('Get Current Release Information\n')
     const { stdout } = await execa('npm', ['info', 'cypress', '--json'])
     const npmInfo = JSON.parse(stdout)

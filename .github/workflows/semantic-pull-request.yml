@@ -26,18 +26,18 @@ jobs:
       - run: env && npm install
         working-directory: scripts/github-actions/semantic-pull-request/
       - name: Lint PR Title and Cypress Changelog Entry
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request_target'
         uses: actions/github-script@v4
         with:
           script: |
-            const { run } = require('./scripts/github-actions/semantic-pull-request')
+            const verifyPullRequest = require('./scripts/github-actions/semantic-pull-request')
 
-            await run({ context, core, github })
+            await verifyPullRequest({ context, core, github })
       - name: Lint Cypress Changelog
         if: github.event_name == 'push'
         uses: actions/github-script@v4
         with:
           script: |
-            const { run } = require('./scripts/github-actions/semantic-pull-request/semantic-default-branch')
+            const verifyDefaultBranch = require('./scripts/github-actions/semantic-pull-request/semantic-default-branch')
 
-            await run({ context, core, github })
+            await verifyDefaultBranch({ context, core, github })
