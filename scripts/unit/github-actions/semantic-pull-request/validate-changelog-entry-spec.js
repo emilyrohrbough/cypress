@@ -110,10 +110,8 @@ describe('semantic-pull-request/validateChangelogEntry', () => {
       ]
 
       const github = {
-        rest: {
-          pulls: {
-            listFiles: sinon.stub().returns(Promise.resolve({ data: files })),
-          },
+        pulls: {
+          listFiles: sinon.stub().returns(Promise.resolve({ data: files })),
         },
       }
 
@@ -136,10 +134,8 @@ describe('semantic-pull-request/validateChangelogEntry', () => {
         ]
 
         const github = {
-          rest: {
-            pulls: {
-              listFiles: sinon.stub().returns(Promise.resolve({ data: files })),
-            },
+          pulls: {
+            listFiles: sinon.stub().returns(Promise.resolve({ data: files })),
           },
         }
 
@@ -161,10 +157,8 @@ describe('semantic-pull-request/validateChangelogEntry', () => {
         ]
 
         const github = {
-          rest: {
-            pulls: {
-              listFiles: sinon.stub().returns(Promise.resolve({ data: files })),
-            },
+          pulls: {
+            listFiles: sinon.stub().returns(Promise.resolve({ data: files })),
           },
         }
 
@@ -187,10 +181,8 @@ describe('semantic-pull-request/validateChangelogEntry', () => {
         ]
 
         const github = {
-          rest: {
-            pulls: {
-              listFiles: sinon.stub().returns(Promise.resolve({ data: files })),
-            },
+          pulls: {
+            listFiles: sinon.stub().returns(Promise.resolve({ data: files })),
           },
         }
 
@@ -212,10 +204,8 @@ describe('semantic-pull-request/validateChangelogEntry', () => {
         ]
 
         const github = {
-          rest: {
-            pulls: {
-              listFiles: sinon.stub().returns(Promise.resolve({ data: files })),
-            },
+          pulls: {
+            listFiles: sinon.stub().returns(Promise.resolve({ data: files })),
           },
         }
 
@@ -239,10 +229,8 @@ describe('semantic-pull-request/validateChangelogEntry', () => {
       ]
 
       const github = {
-        rest: {
-          pulls: {
-            listFiles: sinon.stub().returns(Promise.resolve({ data: files })),
-          },
+        pulls: {
+          listFiles: sinon.stub().returns(Promise.resolve({ data: files })),
         },
       }
 
@@ -263,10 +251,8 @@ describe('semantic-pull-request/validateChangelogEntry', () => {
       ]
 
       const github = {
-        rest: {
-          pulls: {
-            listFiles: sinon.stub().returns(Promise.resolve({ data: files })),
-          },
+        pulls: {
+          listFiles: sinon.stub().returns(Promise.resolve({ data: files })),
         },
       }
 
@@ -289,10 +275,8 @@ describe('semantic-pull-request/validateChangelogEntry', () => {
       ]
 
       const github = {
-        rest: {
-          pulls: {
-            listFiles: sinon.stub().returns(Promise.resolve({ data: files })),
-          },
+        pulls: {
+          listFiles: sinon.stub().returns(Promise.resolve({ data: files })),
         },
       }
 
@@ -315,10 +299,8 @@ describe('semantic-pull-request/validateChangelogEntry', () => {
       ]
 
       const github = {
-        rest: {
-          pulls: {
-            listFiles: sinon.stub().returns(Promise.resolve({ data: files })),
-          },
+        pulls: {
+          listFiles: sinon.stub().returns(Promise.resolve({ data: files })),
         },
       }
 

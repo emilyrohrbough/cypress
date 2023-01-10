@@ -22,8 +22,8 @@ async function run ({ context, core, github }) {
 
     console.log({ currentBranch })
 
-    const { stdout: commitsChangingCLI } = await execa('git', ['log', `${latestReleaseInfo.buildSha}..`, '--format="%cI %s"', '--', path.join('..', '..', '..', 'cli')])
-    const { stdout: commitsChangingPackages } = await execa('git', ['log', `${latestReleaseInfo.buildSha}..`, '--format="%cI %s"', '--', path.join('..', '..', '..', 'packages')])
+    const { stdout: commitsChangingCLI } = await execa('git', ['log', `${latestReleaseInfo.buildSha}..`, '--format="%cI %s"', '--', path.join(__dirname, '..', '..', '..', 'cli')])
+    const { stdout: commitsChangingPackages } = await execa('git', ['log', `${latestReleaseInfo.buildSha}..`, '--format="%cI %s"', '--', path.join(__dirname, '..', '..', '..', 'packages')])
 
     console.log('\n\ncommitsChangingCLI', commitsChangingCLI)
     console.log('commitsChangingPackages', commitsChangingPackages)

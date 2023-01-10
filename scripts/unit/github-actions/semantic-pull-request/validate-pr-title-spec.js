@@ -28,11 +28,6 @@ describe('semantic-pull-request/validatePrTitle', () => {
             iterator: sinon.stub().returns(myAsyncIterable),
 
           },
-          rest: {
-            pulls: {
-              listCommits: sinon.stub().returns(Promise.resolve({ data: commits })),
-            },
-          },
         }
 
         const prTitle = 'fix: issue with server'
@@ -63,11 +58,6 @@ describe('semantic-pull-request/validatePrTitle', () => {
             iterator: sinon.stub().returns(myAsyncIterable),
 
           },
-          rest: {
-            pulls: {
-              listCommits: sinon.stub().returns(Promise.resolve({ data: commits })),
-            },
-          },
         }
 
         const prTitle = 'fix: issue with server'
@@ -95,11 +85,6 @@ describe('semantic-pull-request/validatePrTitle', () => {
           paginate: {
             iterator: sinon.stub().returns(myAsyncIterable),
 
-          },
-          rest: {
-            pulls: {
-              listCommits: sinon.stub().returns(Promise.resolve({ data: commits })),
-            },
           },
         }
 
