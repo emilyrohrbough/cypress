@@ -26,7 +26,7 @@ jobs:
       - run: env && npm install
         working-directory: scripts/github-actions/semantic-pull-request/
       - name: Lint PR Title and Cypress Changelog Entry
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request_target'
         uses: actions/github-script@v4
         with:
           script: |
