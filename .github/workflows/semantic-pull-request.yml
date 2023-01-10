@@ -9,20 +9,19 @@ on:
 
 jobs:
   main:
-    name: Lint Title
+    name: Lint PR Title and Binary Changelog
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.base.ref }}
-          # ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-          # fetch-depth: 2147483647
       - run: git checkout $GITHUB_HEAD_REF
-      - name: Lint PR Title
-        run: |
-          env && npm install && npm run verify
-        working-directory: scripts/github-actions/semantic-pull-request/
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Lint PR Title and Binary Changelog
+        uses: actions/github-script@v4
+        with:
+          script: |
+          const { run } = require('./scripts/github-actions/semantic-pull-request')
+
+          await run({ context, core, github })

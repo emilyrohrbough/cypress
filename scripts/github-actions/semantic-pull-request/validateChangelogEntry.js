@@ -52,7 +52,7 @@ function printChangeLogExample (type, prNumber, linkedIssues) {
 
 async function validateChangelogEntry ({ github, restParameters, semanticResult, body }) {
   // gh pr view https://github.com/emilyrohrbough/cypress/pull/4 --json files
-  const { data } = await github.rest.pulls.listFiles(restParameters)
+  const { data } = await github.pulls.listFiles(restParameters)
 
   // console.log('current branch', process.env.GITHUB_HEAD_REF)
   // console.log('base branch', process.env.GITHUB_BASE_REF)
