@@ -3,7 +3,7 @@ const { changeCatagories, parserOpts } = require('./changeCategories')
 
 const types = Object.keys(changeCatagories)
 
-async function validateTitle (prTitle) {
+function _validateTitle (prTitle) {
   const result = parser(prTitle, parserOpts)
 
   function printAvailableTypes () {
@@ -32,8 +32,8 @@ async function validateTitle (prTitle) {
   return result
 }
 
-module.exports = async function validatePrTitle ({ github, prTitle, restParameters }) {
-  let result = await validateTitle(prTitle)
+async function validatePrTitle ({ github, prTitle, restParameters }) {
+  let result = _validateTitle(prTitle)
 
   const commits = []
   let nonMergeCommits = []
@@ -46,9 +46,9 @@ module.exports = async function validatePrTitle ({ github, prTitle, restParamete
 
     // GitHub does not count merge commits when deciding whether to use
     // the PR title or a commit message for the squash commit message.
-    nonMergeCommits = commits.filter(
-      (commit) => commit.parents.length < 2,
-    )
+    nonMergeCommits = commits.filter((commit) => {
+      return commit.parents.length < 2
+    })
 
     // We only need two non-merge commits to know that the PR
     // title won't be used.
@@ -61,7 +61,7 @@ module.exports = async function validatePrTitle ({ github, prTitle, restParamete
   // commit, we need to validate the commit title.
   if (nonMergeCommits.length === 1) {
     try {
-      result = await validateTitle(nonMergeCommits[0].commit.message)
+      result = _validateTitle(nonMergeCommits[0].commit.message)
     } catch (error) {
       throw new Error(
         `Pull request has only one commit and it's not semantic; this may lead to a non-semantic commit in the base branch (see https://github.community/t/how-to-change-the-default-squash-merge-commit-message/1155). Amend the commit message to match the pull request title, or add another commit.`,
@@ -70,4 +70,9 @@ module.exports = async function validatePrTitle ({ github, prTitle, restParamete
   }
 
   return result
+}
+
+module.exports = {
+  validatePrTitle,
+  _validateTitle,
 }
