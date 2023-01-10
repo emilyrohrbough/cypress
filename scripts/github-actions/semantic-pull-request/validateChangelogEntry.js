@@ -4,7 +4,7 @@ const fs = require('fs')
 const path = require('path')
 
 function _getResolvedMessage (type, prNumber, linkedIssues) {
-  if (linkedIssues?.length) {
+  if (linkedIssues && linkedIssues.length) {
     const issueMessage = userFacingChanges[type].message.hasIssue
 
     const links = linkedIssues.sort((a, b) => a - b)
@@ -115,7 +115,7 @@ async function validateChangelogEntry ({ github, restParameters, semanticResult,
   const resolveMessage = _getResolvedMessage(semanticResult.type, restParameters.pull_number, linkedIssues)
 
   if (!changelog.includes(resolveMessage)) {
-    if (linkedIssues?.length) {
+    if (linkedIssues && linkedIssues.length) {
       throw new Error(`The changelog entry does not include the linked issues that this pull request resolves. Please update your entry to include:\n\n${resolveMessage}`)
     }
 
