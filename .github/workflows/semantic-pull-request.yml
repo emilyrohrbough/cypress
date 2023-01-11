@@ -25,5 +25,4 @@ jobs:
           script: |
             const verifyPullRequest = require('./scripts/github-actions/semantic-pull-request')
 
-
             await verifyPullRequest({ context, core, github })

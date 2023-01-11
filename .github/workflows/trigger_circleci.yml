@@ -32,7 +32,7 @@ jobs:
 
           echo "Triggering CircleCi pipeline for $BRANCH"
 
-          response=$(curl -X POST https://circleci.com/api/v2/project/github/cypress-io/cypress/pipeline \
+          response=$(curl -X POST https://circleci.com/api/v2/project/github/emilyrohrbough/cypress/pipeline \
             --header "Circle-Token:$CIRCLE_TOKEN" \
             --header "content-type:application/json" \
             --data "{\"branch\":\"$BRANCH\"}" \
