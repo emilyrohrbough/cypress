@@ -25,4 +25,6 @@ jobs:
           script: |
             const verifyPullRequest = require('./scripts/github-actions/semantic-pull-request')
 
+            await exec.exec('npm', ['install', 'conventional-commits-parser@3.2.4']);
+
             await verifyPullRequest({ context, core, github })
