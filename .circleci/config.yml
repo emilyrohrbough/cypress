@@ -66,11 +66,6 @@ jobs:
             fi
       - continuation/continue:
           configuration_path: workflows.yml
-
-  run-release:
-    docker:
-      - image: cimg/node:current
-    steps:
       - run:
           name: Download .circleci/workflows.yaml
           command: |
@@ -87,9 +82,6 @@ workflows:
   setup-workflow:
     jobs:
       - run-workflows
-      - run-release:
-          requires:
-            - run-workflows
  
           # filters:
           #   branches:

@@ -1181,19 +1181,22 @@ jobs:
         default: medium
     resource_class: << parameters.resource_class >>
     steps:
-      - checkout
-      - install-required-node
-      - verify-build-setup:
-          executor: << parameters.executor >>
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - cypress
-            - .nvm # mac / linux
-            - ProgramData/nvm # windows
-      - caching-dependency-installer:
-          only-cache-for-root-user: <<parameters.only-cache-for-root-user>>
-      - store-npm-logs
+      - run: | 
+        echo "run checkout"
+        sleep 30 # Give cancellation a chance to run. This script then won't continue running.
+      # - checkout
+      # - install-required-node
+      # - verify-build-setup:
+      #     executor: << parameters.executor >>
+      # - persist_to_workspace:
+      #     root: ~/
+      #     paths:
+      #       - cypress
+      #       - .nvm # mac / linux
+      #       - ProgramData/nvm # windows
+      # - caching-dependency-installer:
+      #     only-cache-for-root-user: <<parameters.only-cache-for-root-user>>
+      # - store-npm-logs
 
   ## restores node_modules from previous step & builds if first step skipped
   build:
@@ -2803,13 +2806,13 @@ workflows:
   emily-trial:
     jobs:
     - node_modules_install
-    - build:
-        context: test-runner:env-canary
-        requires:
-          - node_modules_install
-    - check-ts:
-        requires:
-          - build
+    # - build:
+    #     context: test-runner:env-canary
+    #     requires:
+    #       - node_modules_install
+    # - check-ts:
+    #     requires:
+    #       - build
   # linux-x64:
   #   <<: *linux-x64-workflow
   #   <<: *linux-x64-workflow-exclude-filters
