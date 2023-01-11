@@ -14,7 +14,7 @@ import type { ClonedError, ConfigValidationFailureInfo, CypressError, ErrTemplat
 
 const ansi_up = new AU()
 
-ansi_up.use_classes = true
+ansi_up.use_classes = false
 
 const displayRetriesRemaining = function (tries: number) {
   const times = tries === 1 ? 'time' : 'times'
