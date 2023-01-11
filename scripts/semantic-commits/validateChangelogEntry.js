@@ -94,7 +94,7 @@ async function validateChangelogEntry ({ pullRequestFiles, prNumber, semanticRes
   }
 
   // level 2 - h2 / ##
-  if (!changelog.includes(`##$ ${userFacingChanges[semanticResult.type].section}\n`)) {
+  if (!changelog.includes(userFacingChanges[semanticResult.type].section)) {
     throw new Error(`The changelog does not include the ${userFacingChanges[semanticResult.type].section} section. Given the pull request title provided, this section should be included in the changelog. If the changelog section is correct, please correct the pull request title to correctly reflect the change being made.`)
   }
 

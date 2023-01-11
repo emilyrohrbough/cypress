@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.pull_request.base.ref }}
+          ref: ${{ github.event.pull_request.head.ref }}
       - run: npm install
         working-directory: scripts/github-actions/semantic-pull-request/
       - name: Lint PR Title and Cypress Changelog Entry
