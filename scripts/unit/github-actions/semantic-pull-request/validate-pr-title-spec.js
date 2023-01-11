@@ -26,8 +26,8 @@ describe('semantic-pull-request/validatePrTitle', () => {
         const github = {
           paginate: {
             iterator: sinon.stub().returns(myAsyncIterable),
-
           },
+          pulls: {},
         }
 
         const prTitle = 'fix: issue with server'
@@ -56,8 +56,8 @@ describe('semantic-pull-request/validatePrTitle', () => {
         const github = {
           paginate: {
             iterator: sinon.stub().returns(myAsyncIterable),
-
           },
+          pulls: {},
         }
 
         const prTitle = 'fix: issue with server'
@@ -84,8 +84,8 @@ describe('semantic-pull-request/validatePrTitle', () => {
         const github = {
           paginate: {
             iterator: sinon.stub().returns(myAsyncIterable),
-
           },
+          pulls: {},
         }
 
         const prTitle = 'fix: issue with server'

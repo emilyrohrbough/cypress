@@ -86,7 +86,7 @@ async function validateChangelogEntry ({ pullRequestFiles, prNumber, semanticRes
     )
   }
 
-  const changelog = fs.readFileSync(path.join(__dirname, '..', '..', '..', 'cli', 'CHANGELOG.md'), 'utf8')
+  const changelog = fs.readFileSync(path.join(__dirname, '..', '..', 'cli', 'CHANGELOG.md'), 'utf8')
 
   if (nextVersion && !changelog.includes(`## ${nextVersion}`)) {
     throw new Error(`The changelog version does not contain the next Cypress version of ${nextVersion}. If the changelog version is correct, please correct the pull request title to correctly reflect the change being made.`)
