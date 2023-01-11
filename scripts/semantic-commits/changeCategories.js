@@ -102,9 +102,14 @@ const parserOpts = {
   revertCorrespondence: ['header', 'hash'],
 }
 
+const migrationGuideBlurb = (version) => `Please read our Migration Guide which explains the changes in more detail and how to change your code to migrate to Cypress ${version}.`
+
+// const regression = 'Fixed a regression in []' // with link to changelog
+
 module.exports = {
   changeCatagories,
   parserOpts,
   releaseRules,
   userFacingChanges,
+  migrationGuideBlurb,
 }

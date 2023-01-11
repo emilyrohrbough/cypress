@@ -6,11 +6,6 @@ on:
       - opened
       - edited
       - synchronize
-  push:
-    branches:
-      - develop
-      - emily/changelog
-      - /^release\/\d+\.\d+\.\d+$/
 
 jobs:
   main:
@@ -21,9 +16,8 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.base.ref }}
-          fetch-depth: 0
       - run: git checkout $GITHUB_HEAD_REF
-      - run: env && npm install
+      - run: npm install conventional-commits-parser@3.2.4
         working-directory: scripts/github-actions/semantic-pull-request/
       - name: Lint PR Title and Cypress Changelog Entry
         if: github.event_name == 'pull_request_target'
@@ -33,11 +27,3 @@ jobs:
             const verifyPullRequest = require('./scripts/github-actions/semantic-pull-request')
 
             await verifyPullRequest({ context, core, github })
-      - name: Lint Cypress Changelog
-        if: github.event_name == 'push'
-        uses: actions/github-script@v4
-        with:
-          script: |
-            const verifyDefaultBranch = require('./scripts/github-actions/semantic-pull-request/semantic-default-branch')
-
-            await verifyDefaultBranch({ context, core, github })

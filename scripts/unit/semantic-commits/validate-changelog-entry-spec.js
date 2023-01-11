@@ -3,12 +3,12 @@ const sinonChai = require('sinon-chai')
 const sinon = require('sinon')
 const fs = require('fs')
 
-const { validateChangelogEntry, _getIssueNumbers, _getResolvedMessage } = require('../../../github-actions/semantic-pull-request/validateChangelogEntry')
+const { validateChangelogEntry, getIssueNumbers, _getResolvedMessage } = require('../../semantic-commits/validateChangelogEntry')
 
 use(sinonChai)
 
 describe('semantic-pull-request/validateChangelogEntry', () => {
-  context('_validateTitle', () => {
+  context('_getResolvedMessage', () => {
     it('returned pr link', () => {
       const message = _getResolvedMessage('feat', 52, [])
 
@@ -32,9 +32,9 @@ describe('semantic-pull-request/validateChangelogEntry', () => {
     })
   })
 
-  context('_getIssueNumbers', () => {
+  context('getIssueNumbers', () => {
     it('returns single issue link', () => {
-      const issues = _getIssueNumbers(`
+      const issues = getIssueNumbers(`
         <!-- comment ->
         - Closes #23
         summary of changes see in #458
@@ -44,7 +44,7 @@ describe('semantic-pull-request/validateChangelogEntry', () => {
     })
 
     it('returns issue links for all linking keywords', () => {
-      const issues = _getIssueNumbers(`
+      const issues = getIssueNumbers(`
         <!-- comment ->
         - Close #23
         - Closes #24
@@ -66,7 +66,7 @@ describe('semantic-pull-request/validateChangelogEntry', () => {
         - closes #44
         - closes #44
       `
-      const issues = _getIssueNumbers(body)
+      const issues = getIssueNumbers(body)
 
       expect(issues).to.deep.eq(['44'])
     })
@@ -76,13 +76,13 @@ describe('semantic-pull-request/validateChangelogEntry', () => {
         fixes cypress-io/cypress#123 which is a local issue
         and this is issue in another repo foo/bar#101
       `
-      const issues = _getIssueNumbers(body)
+      const issues = getIssueNumbers(body)
 
       expect(issues).to.deep.eq(['123'])
     })
 
     it('returns empty list when no issues found', () => {
-      const issues = _getIssueNumbers(`
+      const issues = getIssueNumbers(`
         <!-- comment ->
         summary of changes
       `)
@@ -104,23 +104,17 @@ describe('semantic-pull-request/validateChangelogEntry', () => {
     })
 
     it('verifies changelog entry has been included', async () => {
-      const files = [
+      const pullRequestFiles = [
         { filename: 'packages/driver/lib/index.js' },
         { filename: 'cli/CHANGELOG.md' },
       ]
 
-      const github = {
-        pulls: {
-          listFiles: sinon.stub().returns(Promise.resolve({ data: files })),
-        },
-      }
-
       fs.readFileSync.returns('**Performance:**\n- Fixed in [#77](https://github.com/cypress-io/cypress/pull/77).')
 
       await validateChangelogEntry({
-        github,
+        prNumber: 77,
+        pullRequestFiles,
         semanticResult: { type: 'perf' },
-        restParameters: { pull_number: 77 },
       })
 
       // eslint-disable-next-line no-console
@@ -129,20 +123,14 @@ describe('semantic-pull-request/validateChangelogEntry', () => {
 
     describe('ignores validation', () => {
       it('when commit does not include cli or binary file changes', async () => {
-        const files = [
+        const pullRequestFiles = [
           { filename: 'npm/grep/lib/index.js' },
         ]
 
-        const github = {
-          pulls: {
-            listFiles: sinon.stub().returns(Promise.resolve({ data: files })),
-          },
-        }
-
         await validateChangelogEntry({
-          github,
+          prNumber: 77,
+          pullRequestFiles,
           semanticResult: { type: 'feat' },
-          restParameters: { pull_number: 77 },
           body: ' - closes #75',
         })
 
@@ -151,21 +139,15 @@ describe('semantic-pull-request/validateChangelogEntry', () => {
       })
 
       it('when commit does not include cli or binary file changes but had changelog change', async () => {
-        const files = [
+        const pullRequestFiles = [
           { filename: 'npm/grep/lib/index.js' },
           { filename: 'cli/CHANGELOG.md' },
         ]
 
-        const github = {
-          pulls: {
-            listFiles: sinon.stub().returns(Promise.resolve({ data: files })),
-          },
-        }
-
         await validateChangelogEntry({
-          github,
+          prNumber: 77,
+          pullRequestFiles,
           semanticResult: { type: 'feat' },
-          restParameters: { pull_number: 77 },
           body: ' - closes #75',
         })
 
@@ -176,20 +158,14 @@ describe('semantic-pull-request/validateChangelogEntry', () => {
       })
 
       it('when commit has cli or binary file changes that are not user facing', async () => {
-        const files = [
+        const pullRequestFiles = [
           { filename: 'packages/types/src/index.tsx' },
         ]
 
-        const github = {
-          pulls: {
-            listFiles: sinon.stub().returns(Promise.resolve({ data: files })),
-          },
-        }
-
         await validateChangelogEntry({
-          github,
+          prNumber: 77,
+          pullRequestFiles,
           semanticResult: { type: 'chore' },
-          restParameters: { pull_number: 77 },
           body: ' - closes #75',
         })
 
@@ -198,21 +174,15 @@ describe('semantic-pull-request/validateChangelogEntry', () => {
       })
 
       it('when commit has cli or binary file changes that are not user facing and has changelog update', async () => {
-        const files = [
+        const pullRequestFiles = [
           { filename: 'packages/types/src/index.tsx' },
           { filename: 'cli/CHANGELOG.md' },
         ]
 
-        const github = {
-          pulls: {
-            listFiles: sinon.stub().returns(Promise.resolve({ data: files })),
-          },
-        }
-
         await validateChangelogEntry({
-          github,
+          prNumber: 77,
+          pullRequestFiles,
           semanticResult: { type: 'chore' },
-          restParameters: { pull_number: 77 },
           body: ' - closes #75',
         })
 
@@ -224,20 +194,14 @@ describe('semantic-pull-request/validateChangelogEntry', () => {
     })
 
     it('throws an error when entry is missing', async () => {
-      const files = [
+      const pullRequestFiles = [
         { filename: 'packages/driver/lib/index.js' },
       ]
 
-      const github = {
-        pulls: {
-          listFiles: sinon.stub().returns(Promise.resolve({ data: files })),
-        },
-      }
-
       return validateChangelogEntry({
-        github,
+        prNumber: 77,
+        pullRequestFiles,
         semanticResult: { type: 'perf' },
-        restParameters: { pull_number: 77 },
         body: ' - closes #75',
       }).catch((err) => {
         expect(err.message).to.contain('A changelog entry was not found in cli/CHANGELOG.md')
@@ -245,23 +209,17 @@ describe('semantic-pull-request/validateChangelogEntry', () => {
     })
 
     it('throws an error when entry does not correct change section', async () => {
-      const files = [
+      const pullRequestFiles = [
         { filename: 'packages/driver/lib/index.js' },
         { filename: 'cli/CHANGELOG.md' },
       ]
 
-      const github = {
-        pulls: {
-          listFiles: sinon.stub().returns(Promise.resolve({ data: files })),
-        },
-      }
-
       fs.readFileSync.returns('**Features:**\n- Addresses [#39](https://github.com/cypress-io/cypress/issues/39).')
 
       return validateChangelogEntry({
-        github,
+        prNumber: 77,
+        pullRequestFiles,
         semanticResult: { type: 'perf' },
-        restParameters: { pull_number: 77 },
         body: ' - closes #75',
       }).catch((err) => {
         expect(err.message).to.contain('The changelog does not include the **Performance:** section.')
@@ -269,23 +227,17 @@ describe('semantic-pull-request/validateChangelogEntry', () => {
     })
 
     it('throws an error when entry does not include associated issue links', async () => {
-      const files = [
+      const pullRequestFiles = [
         { filename: 'packages/driver/lib/index.js' },
         { filename: 'cli/CHANGELOG.md' },
       ]
 
-      const github = {
-        pulls: {
-          listFiles: sinon.stub().returns(Promise.resolve({ data: files })),
-        },
-      }
-
       fs.readFileSync.returns('**Performance:**')
 
       return validateChangelogEntry({
-        github,
+        prNumber: 77,
+        pullRequestFiles,
         semanticResult: { type: 'perf' },
-        restParameters: { pull_number: 77 },
         body: ' - closes #75',
       }).catch((err) => {
         expect(err.message).to.contain('The changelog entry does not include the linked issues that this pull request resolves.')
@@ -293,23 +245,17 @@ describe('semantic-pull-request/validateChangelogEntry', () => {
     })
 
     it('throws an error when entry does not include pull request link', async () => {
-      const files = [
+      const pullRequestFiles = [
         { filename: 'packages/driver/lib/index.js' },
         { filename: 'cli/CHANGELOG.md' },
       ]
 
-      const github = {
-        pulls: {
-          listFiles: sinon.stub().returns(Promise.resolve({ data: files })),
-        },
-      }
-
       fs.readFileSync.returns('**Performance:**')
 
       return validateChangelogEntry({
-        github,
+        prNumber: 77,
+        pullRequestFiles,
         semanticResult: { type: 'perf' },
-        restParameters: { pull_number: 77 },
       })
       .catch((err) => {
         expect(err.message).to.contain('The changelog entry does not include the pull request link.')
