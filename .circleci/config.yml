@@ -87,14 +87,15 @@ workflows:
   setup-workflow:
     jobs:
       - run-workflows
-      - run-release
-          filters:
-            branches:
-              only:
-              - develop
+      - run-release:
           requires:
             - run-workflows
  
+          # filters:
+          #   branches:
+          #     only:
+          #     - develop
+
         # - /^release\/\d+\.\d+\.\d+$/
         # - 'macOS-launch-arm-browser'
 
