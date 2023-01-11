@@ -25,7 +25,7 @@ function _getResolvedMessage (type, prNumber, linkedIssues) {
   return `${prMessage} [#${prNumber}](https://github.com/cypress-io/cypress/pull/${prNumber}).`
 }
 
-const _getIssueNumbers = (body = '') => {
+const getIssueNumbers = (body = '') => {
   // remove markdown comments
   body.replace(/(<!--.*?-->)|(<!--[\S\s]+?-->)|(<!--[\S\s]*?$)/g, '')
 
@@ -50,17 +50,7 @@ function printChangeLogExample (type, prNumber, linkedIssues) {
   return `${userFacingChanges[type].section}\n - <Insert change details>. ${resolveMessage}`
 }
 
-async function validateChangelogEntry ({ github, restParameters, semanticResult, body }) {
-  // gh pr view https://github.com/emilyrohrbough/cypress/pull/4 --json files
-  const { data } = await github.pulls.listFiles(restParameters)
-
-  // console.log('current branch', process.env.GITHUB_HEAD_REF)
-  // console.log('base branch', process.env.GITHUB_BASE_REF)
-
-  const pullRequestFiles = data.map((fileDetails) => {
-    return fileDetails.filename
-  })
-
+async function validateChangelogEntry ({ pullRequestFiles, prNumber, semanticResult, body, nextVersion }) {
   const hasChangeLogUpdate = pullRequestFiles.includes('cli/CHANGELOG.md')
   const binaryFiles = pullRequestFiles.filter((filename) => {
     return /^(cli|packages)/.test(filename) && filename !== 'cli/CHANGELOG.md'
@@ -70,9 +60,8 @@ async function validateChangelogEntry ({ github, restParameters, semanticResult,
     console.log('This pull request does not contain changes that impacts the next Cypress release.')
 
     if (hasChangeLogUpdate) {
+      // don't error here to allow updating an existing entry or fix punctuation
       console.log('Changelog entry is not required...')
-      // I want to error here...however, what if someone updated an existing entry or
-      // fixed punctuation?....
     }
 
     return
@@ -82,37 +71,33 @@ async function validateChangelogEntry ({ github, restParameters, semanticResult,
     console.log('This pull request does not contain user-facing changes that impacts the next Cypress release.')
 
     if (hasChangeLogUpdate) {
+      // don't error here to allow updating an existing entry or fix punctuation
       console.log('Changelog entry is not required...')
-      // I want to error here...however, what if someone updated an existing entry or
-      // fixed punctuation?....
     }
 
     return
   }
 
-  const linkedIssues = _getIssueNumbers(body)
+  const linkedIssues = getIssueNumbers(body)
 
   if (!hasChangeLogUpdate) {
     throw new Error(
-      `A changelog entry was not found in cli/CHANGELOG.md. Please add a changelog entry that describes the changes made in this pull request. Include this entry under the section:/\n\n${printChangeLogExample(semanticResult.type, restParameters.pull_number, linkedIssues)}`,
+      `A changelog entry was not found in cli/CHANGELOG.md. Please add a changelog entry that describes the changes made in this pull request. Include this entry under the section:/\n\n${printChangeLogExample(semanticResult.type, prNumber, linkedIssues)}`,
     )
   }
 
   const changelog = fs.readFileSync(path.join(__dirname, '..', '..', '..', 'cli', 'CHANGELOG.md'), 'utf8')
 
-  // const additions = hasChangeLogUpdate.patch.split('\n').filter(p => p.startsWith('+')).map(p => p.replace('+', '')).join('\n')
+  if (nextVersion && !changelog.includes(`## ${nextVersion}`)) {
+    throw new Error(`The changelog version does not contain the next Cypress version of ${nextVersion}. If the changelog version is correct, please correct the pull request title to correctly reflect the change being made.`)
+  }
 
-  // const nextVersion = await getNextVersionForPath()
-
-  // if (!changelog.includes(`## ${nextVersion}`)) {
-  //   throw new Error(`The changelog version does not contain the next Cypress version of ${nextVersion}. If the changelog version is correct, please correct the pull request title to correctly reflect the change being made.`)
-  // }
-
-  if (!changelog.includes(userFacingChanges[semanticResult.type].section)) {
+  // level 2 - h2 / ##
+  if (!changelog.includes(`##$ ${userFacingChanges[semanticResult.type].section}\n`)) {
     throw new Error(`The changelog does not include the ${userFacingChanges[semanticResult.type].section} section. Given the pull request title provided, this section should be included in the changelog. If the changelog section is correct, please correct the pull request title to correctly reflect the change being made.`)
   }
 
-  const resolveMessage = _getResolvedMessage(semanticResult.type, restParameters.pull_number, linkedIssues)
+  const resolveMessage = _getResolvedMessage(semanticResult.type, prNumber, linkedIssues)
 
   if (!changelog.includes(resolveMessage)) {
     if (linkedIssues && linkedIssues.length) {
@@ -127,6 +112,6 @@ async function validateChangelogEntry ({ github, restParameters, semanticResult,
 
 module.exports = {
   validateChangelogEntry,
-  _getIssueNumbers,
+  getIssueNumbers,
   _getResolvedMessage,
 }
