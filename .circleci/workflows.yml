@@ -1181,9 +1181,11 @@ jobs:
         default: medium
     resource_class: << parameters.resource_class >>
     steps:
-      - run: | 
-        echo "run checkout"
-        sleep 30 # Give cancellation a chance to run. This script then won't continue running.
+      - run:
+          name: fake_Step
+          command: |
+            echo "run checkout"
+            sleep 30 # Give cancellation a chance to run. This script then won't continue running.
       # - checkout
       # - install-required-node
       # - verify-build-setup:
